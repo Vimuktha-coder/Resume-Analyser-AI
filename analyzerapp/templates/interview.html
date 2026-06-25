@@ -1214,7 +1214,7 @@
         }
 
         startBtn.onclick = async () => {
-            if (!questions.length || questions[0].startsWith('')) {
+            if (!questions.length || (questions[0] || '').toLowerCase().includes('upload your resume')) {
                 setStatus('Please upload your resume before starting the interview.');
                 return;
             }
@@ -1260,5 +1260,6 @@
     <script src="{% static 'js/theme.js' %}"></script>
 </body>
 </html>
+
 
 

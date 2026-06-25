@@ -75,7 +75,7 @@ def user_register(request):
                 return render(request, 'register.html', {'form': form, 'error': 'Email already exists.'})
             
             form.save()
-            return redirect('user_login')  # âœ… redirect to login page
+            return redirect('user_login')  # redirect to login page
     else:
         form = CandidateForm()
     return render(request, 'register.html', {'form': form})
@@ -93,7 +93,7 @@ def user_login(request):
             try:
                 candidate = Candidate.objects.get(email=email, password=password)
                 request.session['candidate_id'] = candidate.id
-                return redirect('user_dashboard')  # âœ… make sure this URL exists
+                return redirect('user_dashboard')  # make sure this URL exists
             except Candidate.DoesNotExist:
                 error = "Invalid email or password."
     else:
@@ -258,7 +258,7 @@ def facebook_login_direct(request):
 #         filename = fs.save(resume.name, resume)
 #         full_path = os.path.join(upload_dir, filename)
 
-#         # âœ… Save full path in session
+#         # Save full path in session
 #         request.session['uploaded_resume_path'] = full_path
 
 #         return redirect('user_dashboard')
@@ -717,15 +717,21 @@ def start_interview(request):
         return redirect('user_login')
 
     resume_path = request.session.get('uploaded_resume_path')
+    if (not resume_path or not os.path.exists(resume_path)) and candidate and candidate.resumes.exists():
+        latest_resume = candidate.resumes.order_by('-uploaded_at').first()
+        if latest_resume and latest_resume.resume_file:
+            resume_path = latest_resume.resume_file.path
+            request.session['uploaded_resume_path'] = resume_path
+
     if resume_path and os.path.exists(resume_path):
         parsed = parse_resume(resume_path)
         parsed["target_role"] = candidate.interview_role if candidate else ""
         questions = generate_questions(parsed, candidate.interview_role if candidate else None)
-        questions_list = questions.split('\n')
+        questions_list = [question.strip() for question in questions.split('\n') if question.strip()]
         if candidate:
             questions_list = questions_list[:candidate.interview_question_count]
     else:
-        questions_list = ["â— Please upload your resume first."]
+        questions_list = ["Please upload your resume first."]
     
     return render(request, 'interview.html', {'questions': questions_list, 'candidate': candidate})
 
@@ -773,7 +779,7 @@ def admin_login(request):
             request.session['admin_logged_in'] = True
             return redirect('admin_dashboard')
         else:
-            messages.error(request, "âŒ Invalid credentials.")
+            messages.error(request, "Invalid credentials.")
             return redirect('admin_login')
     return render(request, 'admin_login.html')  
 
@@ -1023,5 +1029,7 @@ from django.contrib.auth import logout
 def user_logout(request):
     logout(request)
     return redirect('index')  
+
+
 
 
