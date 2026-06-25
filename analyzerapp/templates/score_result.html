@@ -1,0 +1,132 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Score Interview</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #d7e1ec, #f8f8f8);
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            animation: fadeInBody 1s ease-in-out;
+        }
+
+        @keyframes fadeInBody {
+            0% { opacity: 0; transform: scale(0.97); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .score-form {
+            width: 500px;
+            margin: 80px auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            animation: slideIn 1s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        h2 {
+            text-align: center;
+            color: #2b2e4a;
+            font-size: 26px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0 20px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="number"]:focus {
+            border-color: #4facfe;
+            box-shadow: 0 0 6px rgba(79, 172, 254, 0.4);
+            outline: none;
+        }
+
+        input[type="submit"] {
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: white;
+            padding: 14px;
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(79, 172, 254, 0.3);
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background: linear-gradient(to right, #1c92d2, #f2fcfe);
+            color: #0077b6;
+            transform: scale(1.03);
+        }
+
+        .video-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        video {
+            width: 100%;
+            max-height: 300px;
+            background: black;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        video:hover {
+            transform: scale(1.01);
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'css/site.css' %}">
+</head>
+<body>
+    <div class="score-form">
+        <h2> Score Interview - {{ interview.user.username }}</h2>
+
+        {% if interview.video_file %}
+        <div class="video-section">
+            <video controls>
+                <source src="{{ interview.video_file.url }}" type="video/webm">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <label>Communication Score (0-10):</label>
+            <input type="number" name="comm_score" min="0" max="10" required>
+
+            <label>Relevance Score (0-10):</label>
+            <input type="number" name="rel_score" min="0" max="10" required>
+
+            <label>Confidence Score (0-10):</label>
+            <input type="number" name="conf_score" min="0" max="10" required>
+
+            <input type="submit" value="Submit Score">
+        </form>
+    </div>
+</body>
+</html>
+

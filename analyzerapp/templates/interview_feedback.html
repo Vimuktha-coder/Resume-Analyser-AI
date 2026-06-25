@@ -1,0 +1,299 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interview Feedback - Resume Analyzer AI</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at 18% 20%, rgba(37, 99, 235, 0.12), transparent 28%),
+                        radial-gradient(circle at 84% 80%, rgba(139, 92, 246, 0.16), transparent 30%),
+                        linear-gradient(135deg, #eef4ff, #fbfdff 48%, #f4efff);
+            color: #172033;
+            display: grid;
+            place-items: center;
+            padding: 28px;
+        }
+
+        .feedback-card {
+            width: min(100%, 760px);
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid #e3e9f5;
+            border-radius: 18px;
+            box-shadow: 0 28px 70px rgba(15, 23, 42, 0.12);
+            padding: 34px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 32px;
+        }
+
+        .brand-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-mark {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: #eef4ff;
+            color: #2563eb;
+            font-weight: 900;
+        }
+
+        .brand strong {
+            display: block;
+        }
+
+        .brand span {
+            color: #64748b;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .complete-icon {
+            width: 74px;
+            height: 74px;
+            margin: 0 auto 18px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            color: #16a34a;
+            background: #dcfce7;
+            font-size: 2rem;
+            font-weight: 900;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            text-align: center;
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            margin: 0 auto 28px;
+            max-width: 520px;
+            color: #64748b;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .summary-item {
+            padding: 16px;
+            border-radius: 8px;
+            background: #f8fbff;
+            border: 1px solid #e3e9f5;
+            text-align: center;
+        }
+
+        .summary-item strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .summary-item span {
+            color: #64748b;
+            font-size: 0.84rem;
+            font-weight: 700;
+        }
+
+        .rating {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 10px 0 22px;
+        }
+
+        .rating label {
+            min-height: 54px;
+            display: grid;
+            place-items: center;
+            border-radius: 8px;
+            border: 1px solid #dbe4f2;
+            background: #ffffff;
+            color: #f59e0b;
+            font-size: 1.45rem;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .rating input {
+            display: none;
+        }
+
+        .rating input:checked + span {
+            transform: scale(1.15);
+        }
+
+        .rating label.selected {
+            background: #fff7ed;
+            border-color: #f59e0b;
+            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.16);
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 900;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 132px;
+            resize: none;
+            overflow: hidden;
+            border-radius: 8px;
+            border: 1px solid #dbe4f2;
+            padding: 14px 16px;
+            font: inherit;
+            color: #172033;
+            background: #ffffff;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+        }
+
+        .submit-btn {
+            width: 100%;
+            min-height: 50px;
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            background: linear-gradient(135deg, #2563eb, #8b5cf6);
+            font-weight: 900;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 14px 30px rgba(79, 70, 229, 0.22);
+        }
+
+        .fine-print {
+            margin-top: 16px;
+            color: #94a3b8;
+            text-align: center;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        @media (max-width: 680px) {
+            .feedback-card {
+                padding: 24px;
+            }
+
+            .brand,
+            .summary,
+            .rating {
+                grid-template-columns: 1fr;
+            }
+
+            .brand {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+</head>
+<body>
+    <main class="feedback-card">
+        <header class="brand">
+            <div class="brand-left">
+                <div class="brand-mark">AI</div>
+                <div>
+                    <strong>Resume Analyzer AI</strong>
+                    <span>Interview feedback</span>
+                </div>
+            </div>
+            <span>{% if candidate %}{{ candidate.name }}{% else %}Candidate{% endif %}</span>
+        </header>
+
+        <div class="complete-icon"></div>
+        <h1>Interview Submitted</h1>
+        <p class="subtitle">Your interview has been recorded successfully. Rate the experience and add any extra details before returning home.</p>
+
+        <div class="summary">
+            <div class="summary-item"><strong>Recording</strong><span>Uploaded</span></div>
+            <div class="summary-item"><strong>Status</strong><span>Submitted for admin review</span></div>
+            <div class="summary-item"><strong>Privacy</strong><span>Admin-only video access</span></div>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="field">
+                <label>Rate the AI interviewer model</label>
+                <div class="rating">
+                    <label><input type="radio" name="ai_rating" value="1"><span></span></label>
+                    <label><input type="radio" name="ai_rating" value="2"><span></span></label>
+                    <label><input type="radio" name="ai_rating" value="3" checked><span></span></label>
+                    <label><input type="radio" name="ai_rating" value="4"><span></span></label>
+                    <label><input type="radio" name="ai_rating" value="5"><span></span></label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Rate the platform experience</label>
+                <div class="rating">
+                    <label><input type="radio" name="platform_rating" value="1"><span></span></label>
+                    <label><input type="radio" name="platform_rating" value="2"><span></span></label>
+                    <label><input type="radio" name="platform_rating" value="3" checked><span></span></label>
+                    <label><input type="radio" name="platform_rating" value="4"><span></span></label>
+                    <label><input type="radio" name="platform_rating" value="5"><span></span></label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="details">Extra details</label>
+                <textarea id="details" name="details" placeholder="Share anything you want the reviewer to know..."></textarea>
+            </div>
+
+            <button class="submit-btn" type="submit">Submit Feedback & Return Home</button>
+        </form>
+        <div class="fine-print">Your interview video is hidden from candidate dashboard and visible only to admin review.</div>
+    </main>
+    <script src="{% static 'js/theme.js' %}"></script>
+    <script>
+        function updateRating(group) {
+            const selected = Number(group.querySelector('input:checked')?.value || 0);
+            group.querySelectorAll('label').forEach((label) => {
+                const value = Number(label.querySelector('input').value);
+                label.classList.toggle('selected', value <= selected);
+            });
+        }
+
+        document.querySelectorAll('.rating').forEach((group) => {
+            group.querySelectorAll('input').forEach((input) => {
+                input.addEventListener('change', () => updateRating(group));
+            });
+            updateRating(group);
+        });
+    </script>
+</body>
+</html>
+

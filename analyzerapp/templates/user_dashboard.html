@@ -1,0 +1,1013 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard - Resume Analyzer AI</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #f6f8ff;
+            color: #172033;
+        }
+
+        .app-shell {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 236px 1fr;
+        }
+
+        .sidebar {
+            background: #ffffff;
+            border-right: 1px solid #e3e9f5;
+            padding: 28px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 8px;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            color: #2563eb;
+            background: #eef4ff;
+            font-weight: 900;
+            box-shadow: inset 0 0 0 1px #dbe7ff;
+        }
+
+        .brand strong {
+            display: block;
+            font-size: 1.02rem;
+        }
+
+        .brand span {
+            color: #2563eb;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .nav {
+            display: grid;
+            gap: 8px;
+        }
+
+        .nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 44px;
+            padding: 0 14px;
+            border-radius: 8px;
+            color: #637089;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .nav a.active,
+        .nav a:hover {
+            background: #eef4ff;
+            color: #2563eb;
+        }
+
+        .nav-icon {
+            width: 18px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .upgrade {
+            margin-top: auto;
+            padding: 18px;
+            border-radius: 8px;
+            background: #f4efff;
+            text-align: center;
+            border: 1px solid #e8ddff;
+        }
+
+        .upgrade .crown {
+            width: 42px;
+            height: 42px;
+            margin: -34px auto 10px;
+            display: grid;
+            place-items: center;
+            border-radius: 8px;
+            color: #6d28d9;
+            background: #ebe1ff;
+            box-shadow: 0 10px 24px rgba(109, 40, 217, 0.16);
+        }
+
+        .upgrade strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.92rem;
+        }
+
+        .upgrade p {
+            margin: 0 0 14px;
+            color: #69748a;
+            font-size: 0.78rem;
+            line-height: 1.45;
+        }
+
+        .upgrade a {
+            display: block;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: #efe6ff;
+            color: #6d28d9;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 0.82rem;
+        }
+
+        .main {
+            padding: 26px 30px 34px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .bell {
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 1px solid #e3e9f5;
+            color: #637089;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #172033;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: #6d28d9;
+            color: #ffffff;
+            font-size: 0.82rem;
+            font-weight: 900;
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            min-height: 190px;
+            background: #ffffff;
+            border: 1px solid #e3e9f5;
+            border-radius: 8px;
+            padding: 30px 34px;
+            box-shadow: 0 12px 32px rgba(37, 99, 235, 0.06);
+        }
+
+        .hero h1 {
+            margin: 0 0 10px;
+            font-size: 1.65rem;
+            letter-spacing: 0;
+        }
+
+        .hero h1 span {
+            color: #2563eb;
+        }
+
+        .hero p {
+            margin: 0 0 18px;
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .hero ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: grid;
+            gap: 10px;
+            color: #64748b;
+            font-size: 0.86rem;
+        }
+
+        .hero li::before {
+            content: '+';
+            color: #2563eb;
+            font-weight: 900;
+            margin-right: 10px;
+        }
+
+        .bot-art {
+            position: absolute;
+            right: 38px;
+            bottom: 0;
+            width: 260px;
+            height: 165px;
+            background: #eef2ff;
+            border-radius: 120px 120px 0 0;
+        }
+
+        .bot-face {
+            position: absolute;
+            right: 76px;
+            bottom: 34px;
+            width: 104px;
+            height: 76px;
+            border-radius: 36px;
+            background: #2563eb;
+            box-shadow: 0 14px 28px rgba(37, 99, 235, 0.22);
+        }
+
+        .bot-face::before,
+        .bot-face::after {
+            content: '';
+            position: absolute;
+            top: 31px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ffffff;
+        }
+
+        .bot-face::before {
+            left: 29px;
+        }
+
+        .bot-face::after {
+            right: 29px;
+        }
+
+        .progress-card,
+        .panel,
+        .metric-card,
+        .activity {
+            background: #ffffff;
+            border: 1px solid #e3e9f5;
+            border-radius: 8px;
+            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
+        }
+
+        .progress-card {
+            margin-top: 14px;
+            padding: 22px 26px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 18px;
+            align-items: center;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+
+        .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: calc(100% + 2px);
+            width: calc(100% - 54px);
+            height: 2px;
+            background: #dce4f2;
+        }
+
+        .step.done:not(:last-child)::after {
+            background: #22c55e;
+        }
+
+        .step-badge {
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: #e9eef8;
+            color: #64748b;
+            font-weight: 900;
+            flex: 0 0 auto;
+        }
+
+        .step.done .step-badge {
+            background: #22c55e;
+            color: #ffffff;
+        }
+
+        .step.current .step-badge {
+            background: #2563eb;
+            color: #ffffff;
+        }
+
+        .step strong {
+            display: block;
+            font-size: 0.88rem;
+        }
+
+        .step span {
+            color: #64748b;
+            font-size: 0.78rem;
+        }
+
+        .metrics {
+            margin-top: 18px;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .metric-card {
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .metric-icon,
+        .panel-icon {
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            border-radius: 8px;
+            font-size: 1.25rem;
+            flex: 0 0 auto;
+        }
+
+        .green {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .blue {
+            background: #e0edff;
+            color: #2563eb;
+        }
+
+        .purple {
+            background: #f1e8ff;
+            color: #7c3aed;
+        }
+
+        .orange {
+            background: #fff1db;
+            color: #ea580c;
+        }
+
+        .metric-label {
+            color: #64748b;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .metric-value {
+            margin-top: 4px;
+            font-size: 1.1rem;
+            font-weight: 900;
+        }
+
+        .metric-value small {
+            color: #16a34a;
+            font-size: 0.75rem;
+            font-weight: 800;
+        }
+
+        .panels {
+            margin-top: 18px;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .panel {
+            padding: 22px;
+        }
+
+        .panel-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 18px;
+        }
+
+        .panel h3 {
+            margin: 0 0 6px;
+            font-size: 1rem;
+        }
+
+        .pill {
+            display: inline-flex;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #eaf2ff;
+            color: #2563eb;
+            font-size: 0.72rem;
+            font-weight: 900;
+        }
+
+        .pill.success {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .pill.pending {
+            background: #f1e8ff;
+            color: #7c3aed;
+        }
+
+        .detail-list {
+            display: grid;
+            gap: 12px;
+            margin: 0 0 18px;
+            padding: 0;
+            list-style: none;
+            color: #64748b;
+            font-size: 0.84rem;
+        }
+
+        .detail-list li {
+            display: flex;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .detail-list strong {
+            color: #172033;
+        }
+
+        .button-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 40px;
+            padding: 0 14px;
+            border-radius: 8px;
+            border: 1px solid #dbe4f2;
+            color: #64748b;
+            background: #ffffff;
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 0.82rem;
+        }
+
+        .btn.primary {
+            grid-column: 1 / -1;
+            background: #2563eb;
+            border-color: #2563eb;
+            color: #ffffff;
+        }
+
+        .button-row .btn:only-child {
+            grid-column: 1 / -1;
+        }
+
+        .btn.success {
+            color: #16a34a;
+            border-color: #86efac;
+        }
+
+        .btn.purple {
+            grid-column: 1 / -1;
+            color: #7c3aed;
+            border-color: #c4b5fd;
+        }
+
+        .btn.disabled {
+            opacity: 0.55;
+            pointer-events: none;
+        }
+
+        .role-form {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            margin: 0 0 14px;
+        }
+
+        .role-form select {
+            min-width: 0;
+            min-height: 40px;
+            padding: 0 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #172033;
+            font-weight: 800;
+        }
+
+        .role-form button {
+            min-height: 40px;
+            padding: 0 14px;
+            border: 1px solid #2563eb;
+            border-radius: 8px;
+            color: #ffffff;
+            background: #2563eb;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .activity {
+            margin-top: 22px;
+            padding: 20px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .activity h3 {
+            margin: 0 0 14px;
+            font-size: 1rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: #64748b;
+            font-size: 0.84rem;
+        }
+
+        .check {
+            width: 30px;
+            height: 30px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: #dcfce7;
+            color: #16a34a;
+            font-weight: 900;
+        }
+
+
+        .file-compact {
+            display: inline-block;
+            max-width: 210px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            vertical-align: bottom;
+        }
+
+        .upgrade button {
+            display: block;
+            width: 100%;
+            padding: 10px 12px;
+            border: 0;
+            border-radius: 8px;
+            background: #efe6ff;
+            color: #6d28d9;
+            font-weight: 800;
+            font-size: 0.82rem;
+            cursor: pointer;
+        }
+
+        .payment-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(15, 23, 42, 0.42);
+            backdrop-filter: blur(10px);
+        }
+
+        .payment-overlay.open {
+            display: flex;
+        }
+
+        .payment-modal {
+            width: min(760px, 100%);
+            border-radius: 18px;
+            background: #ffffff;
+            box-shadow: 0 28px 70px rgba(15, 23, 42, 0.26);
+            padding: 24px;
+        }
+
+        .payment-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: flex-start;
+            margin-bottom: 18px;
+        }
+
+        .payment-head h2 { margin: 0 0 6px; }
+        .payment-head p { margin: 0; color: #64748b; font-weight: 600; }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border: 0;
+            border-radius: 50%;
+            background: #f1f5f9;
+            cursor: pointer;
+            font-weight: 900;
+        }
+
+        .plans {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .plan-card {
+            border: 1px solid #e3e9f5;
+            border-radius: 14px;
+            padding: 18px;
+            background: #f8fbff;
+        }
+
+        .plan-card.featured {
+            border-color: #7c3aed;
+            background: #f5f0ff;
+            box-shadow: 0 18px 38px rgba(124, 58, 237, 0.18);
+        }
+
+        .plan-card h3 { margin: 0 0 8px; }
+        .price { margin: 0 0 12px; font-size: 1.55rem; font-weight: 900; }
+        .plan-card ul { margin: 0 0 16px; padding-left: 18px; color: #475569; line-height: 1.6; font-size: 0.86rem; }
+
+        .pay-btn {
+            width: 100%;
+            min-height: 40px;
+            border: 0;
+            border-radius: 10px;
+            color: #fff;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        @media (max-width: 760px) { .plans { grid-template-columns: 1fr; } }
+        @media (max-width: 1100px) {
+            .app-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+                height: auto;
+            }
+
+            .nav {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .upgrade {
+                display: none;
+            }
+
+            .bot-art {
+                opacity: 0.35;
+            }
+
+            .metrics,
+            .panels {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 720px) {
+            .main {
+                padding: 18px;
+            }
+
+            .hero {
+                padding: 24px;
+            }
+
+            .bot-art {
+                display: none;
+            }
+
+            .progress-card,
+            .metrics,
+            .panels {
+                grid-template-columns: 1fr;
+            }
+
+            .step:not(:last-child)::after {
+                display: none;
+            }
+
+            .activity {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">AI</div>
+                <div>
+                    <strong>AI Interview</strong>
+                    <span>Assistant</span>
+                </div>
+            </div>
+
+            <nav class="nav">
+                <a class="active" href="{% url 'user_dashboard' %}"><span class="nav-icon"></span>Dashboard</a>
+                <a href="{% url 'upload_resume' %}"><span class="nav-icon"></span>Resume</a>
+                <a href="{% url 'user_analytics' %}"><span class="nav-icon"></span>Analytics</a>
+                <a href="{% url 'user_logout' %}"><span class="nav-icon"></span>Logout</a>
+            </nav>
+
+            <div class="upgrade">
+                <div class="crown"></div>
+                <strong>Upgrade to Pro</strong>
+                <p>Unlock advanced analytics and interview insights.</p>
+                <button id="openUpgrade" type="button">Upgrade Now</button>
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <div class="bell"></div>
+                <a class="profile" href="{% url 'user_dashboard' %}">
+                    <span class="avatar">{{ candidate.name|slice:":2"|upper }}</span>
+                    <span>{{ candidate.name }}</span>
+                    <span></span>
+                </a>
+                <button class="theme-toggle" type="button" aria-label="Toggle theme"></button>
+            </header>
+
+            <section class="hero">
+                <h1>Welcome back, <span>{{ candidate.name }}</span></h1>
+                <p>Track your interview journey and improve your skills.</p>
+                <ul>
+                    <li>AI-powered interviews tailored to your resume</li>
+                    <li>Get real-time feedback and performance insights</li>
+                </ul>
+                <div class="bot-art">
+                    <div class="bot-face"></div>
+                </div>
+            </section>
+
+            <section class="progress-card">
+                <div class="step {% if candidate.resumes.exists %}done{% else %}current{% endif %}">
+                    <div class="step-badge">{% if candidate.resumes.exists %}{% else %}1{% endif %}</div>
+                    <div>
+                        <strong>Resume Uploaded</strong>
+                        <span>{% if candidate.resumes.exists %}Completed{% else %}Pending{% endif %}</span>
+                    </div>
+                </div>
+                <div class="step {% if candidate.resumes.exists %}current{% endif %}">
+                    <div class="step-badge">2</div>
+                    <div>
+                        <strong>Interview</strong>
+                        <span>{% if candidate.interview_video %}Completed{% elif candidate.resumes.exists %}Ready{% else %}Pending{% endif %}</span>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-badge">3</div>
+                    <div>
+                        <strong>Results</strong>
+                        <span>{% if candidate.interview_video and candidate.status == 'Accepted' %}Available{% else %}Locked{% endif %}</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="metrics" id="analytics">
+                <div class="metric-card">
+                    <div class="metric-icon green"></div>
+                    <div>
+                        <div class="metric-label">Resume Score</div>
+                        <div class="metric-value">{% if candidate.interview_video and candidate.status == 'Accepted' %}{{ candidate.score|default:"--" }}/100 <small>Published</small>{% else %}-- <small>Pending Review</small>{% endif %}</div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon purple"></div>
+                    <div>
+                        <div class="metric-label">Interviews Completed</div>
+                        <div class="metric-value">{% if candidate.interview_video %}1{% else %}0{% endif %} <small>Total</small></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon blue"></div>
+                    <div>
+                        <div class="metric-label">Average Score</div>
+                        <div class="metric-value">{% if candidate.interview_video and candidate.status == 'Accepted' %}{{ candidate.score|default:"--" }}% <small>Across Interviews</small>{% else %}-- <small>Pending Review</small>{% endif %}</div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon orange"></div>
+                    <div>
+                        <div class="metric-label">Last Interview</div>
+                        <div class="metric-value">{% if candidate.interview_video %}Submitted{% else %}Not Started{% endif %}</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panels">
+                <article class="panel">
+                    <div class="panel-head">
+                        <div>
+                            <div class="panel-icon green"></div>
+                        </div>
+                        <span class="pill success">{% if candidate.resumes.exists %}Uploaded{% else %}Required{% endif %}</span>
+                    </div>
+                    <h3>Resume</h3>
+                    <ul class="detail-list">
+                        {% if candidate.resumes.exists %}
+                            <li><span>File</span><strong class="file-compact" title="{{ candidate.resumes.last.resume_file.name|cut:"resumes/uploaded/" }}">{{ candidate.resumes.last.resume_file.name|cut:"resumes/uploaded/" }}</strong></li>
+                            <li><span>Status</span><strong>Ready</strong></li>
+                        {% else %}
+                            <li><span>File</span><strong>No resume yet</strong></li>
+                            <li><span>Status</span><strong>Upload required</strong></li>
+                        {% endif %}
+                    </ul>
+                    <div class="button-row">
+                        {% if candidate.resumes.exists %}
+                            <a class="btn success" href="{{ candidate.resumes.last.resume_file.url }}" target="_blank">View / Download Resume</a>
+                        {% else %}
+                            <a class="btn primary" href="{% url 'upload_resume' %}">Upload Resume</a>
+                        {% endif %}
+                    </div>
+                </article>
+
+                {% if not candidate.interview_video %}
+                <article class="panel">
+                    <div class="panel-head">
+                        <div class="panel-icon blue"></div>
+                        <span class="pill">{% if candidate.resumes.exists %}Ready to Start{% else %}Resume Needed{% endif %}</span>
+                    </div>
+                    <h3>AI Interview</h3>
+                    <ul class="detail-list">
+                        <li><span>Role</span><strong>{{ candidate.interview_role }}</strong></li>
+                        <li><span>Duration</span><strong>{{ candidate.interview_duration }} mins</strong></li>
+                        <li><span>Questions</span><strong>{{ candidate.interview_question_count }} Questions</strong></li>
+                    </ul>
+                    {% if candidate.resumes.exists %}
+                    <form class="role-form" method="POST" action="{% url 'update_user_role' %}">
+                        {% csrf_token %}
+                        <select name="interview_role" aria-label="Select interview role">
+                            {% for role in role_choices %}
+                                <option value="{{ role }}" {% if candidate.interview_role == role %}selected{% endif %}>{{ role }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit">Set Role</button>
+                    </form>
+                    {% endif %}
+                    {% if candidate.resumes.exists %}
+                        <a class="btn primary" href="{% url 'start_interview' %}">Start Interview </a>
+                    {% else %}
+                        <a class="btn primary disabled" href="#">Upload Resume First</a>
+                    {% endif %}
+                </article>
+                {% endif %}
+
+                <article class="panel" id="results">
+                    <div class="panel-head">
+                        <div class="panel-icon purple"></div>
+                        <span class="pill {% if candidate.interview_video and candidate.status == 'Accepted' %}success{% else %}pending{% endif %}">
+                            {% if candidate.interview_video %}{{ candidate.status|default:"Pending" }}{% else %}Locked{% endif %}
+                        </span>
+                    </div>
+                    <h3>Interview Result</h3>
+                    <ul class="detail-list">
+                        <li><span>Status</span><strong>{% if candidate.interview_video %}{{ candidate.status|default:"Pending" }}{% else %}Not Submitted{% endif %}</strong></li>
+                        <li><span>Latest Score</span><strong>{% if candidate.interview_video and candidate.status == 'Accepted' %}{{ candidate.score|default:"--" }}{% else %}--{% endif %}</strong></li>
+                    </ul>
+                    {% if candidate.interview_video and candidate.status == 'Accepted' %}
+                        <a class="btn purple" href="{% url 'user_analytics' %}">View Analytics</a>
+                    {% else %}
+                        <a class="btn purple disabled" href="#">Pending Admin Review</a>
+                    {% endif %}
+                </article>
+            </section>
+
+            <section class="activity">
+                <div>
+                    <h3>Recent Activity</h3>
+                    <div class="activity-item">
+                        <span class="check"></span>
+                        <div>
+                            <strong>{% if candidate.resumes.exists %}Resume uploaded successfully{% else %}Profile ready{% endif %}</strong><br>
+                            <span>{% if candidate.resumes.exists %}Your resume is ready for interview practice.{% else %}Upload your resume to start your interview journey.{% endif %}</span>
+                        </div>
+                    </div>
+                </div>
+                <a class="btn" href="{% url 'user_dashboard' %}">View All Activity </a>
+            </section>
+        </main>
+    </div>
+    <script src="{% static 'js/theme.js' %}"></script>
+    <div id="paymentOverlay" class="payment-overlay" aria-hidden="true" style="display: none;">
+        <section class="payment-modal" role="dialog" aria-modal="true" aria-labelledby="paymentTitle">
+            <div class="payment-head">
+                <div>
+                    <h2 id="paymentTitle">Upgrade to Pro</h2>
+                    <p>Choose a plan to unlock advanced interview analytics and detailed reports.</p>
+                </div>
+                <button id="closeUpgrade" class="modal-close" type="button" aria-label="Close payment options">X</button>
+            </div>
+            <div class="plans">
+                <article class="plan-card">
+                    <h3>Starter</h3>
+                    <p class="price">Rs 199</p>
+                    <ul><li>5 AI interviews</li><li>Basic analytics</li><li>Resume insights</li></ul>
+                    <button class="pay-btn" type="button" data-plan="Starter" data-amount="19900">Pay Rs 199</button>
+                </article>
+                <article class="plan-card featured">
+                    <h3>Pro</h3>
+                    <p class="price">Rs 499</p>
+                    <ul><li>Unlimited practice</li><li>Detailed analytics</li><li>Priority scoring review</li></ul>
+                    <button class="pay-btn" type="button" data-plan="Pro" data-amount="49900">Pay Rs 499</button>
+                </article>
+                <article class="plan-card">
+                    <h3>Premium</h3>
+                    <p class="price">Rs 999</p>
+                    <ul><li>Everything in Pro</li><li>Advanced reports</li><li>Career prep insights</li></ul>
+                    <button class="pay-btn" type="button" data-plan="Premium" data-amount="99900">Pay Rs 999</button>
+                </article>
+            </div>
+        </section>
+    </div>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        const overlay = document.getElementById('paymentOverlay');
+        const openUpgrade = document.getElementById('openUpgrade');
+        const closeUpgrade = document.getElementById('closeUpgrade');
+        const razorpayKey = '{{ razorpay_key_id|default:"" }}';
+        function togglePayment(open) {
+            if (!overlay) return;
+            overlay.classList.toggle('open', open);
+            overlay.style.display = open ? 'flex' : 'none';
+            overlay.setAttribute('aria-hidden', open ? 'false' : 'true');
+        }
+        if (openUpgrade) openUpgrade.addEventListener('click', () => togglePayment(true));
+        if (closeUpgrade) closeUpgrade.addEventListener('click', () => togglePayment(false));
+        if (overlay) overlay.addEventListener('click', (event) => { if (event.target === overlay) togglePayment(false); });
+        document.querySelectorAll('.pay-btn').forEach((button) => {
+            button.addEventListener('click', () => {
+                if (!razorpayKey) {
+                    alert('Razorpay key is not configured. Add RAZORPAY_KEY_ID in .env and restart Django.');
+                    return;
+                }
+                const checkout = new Razorpay({
+                    key: razorpayKey,
+                    amount: button.dataset.amount,
+                    currency: 'INR',
+                    name: 'Resume Analyzer AI',
+                    description: button.dataset.plan + ' Plan',
+                    prefill: { name: '{{ candidate.name|escapejs }}', email: '{{ candidate.email|escapejs }}', contact: '{{ candidate.phone|escapejs }}' },
+                    theme: { color: '#2563eb' },
+                    handler: function () { alert('Payment completed. Pro features are enabled for this demo.'); togglePayment(false); }
+                });
+                checkout.open();
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

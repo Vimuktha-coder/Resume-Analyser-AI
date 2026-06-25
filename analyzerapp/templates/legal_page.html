@@ -1,0 +1,63 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ title }} | Resume Analyzer AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Inter', 'Segoe UI', sans-serif; color: #111936; background: linear-gradient(135deg, #f8fbff, #eef5ff 52%, #f5efff); }
+        .nav { min-height: 78px; padding: 18px 46px; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,.88); border-bottom: 1px solid #dfe8f7; backdrop-filter: blur(16px); position: sticky; top: 0; z-index: 20; }
+        .brand { text-decoration: none; color: #111936; font-weight: 950; font-size: 1.45rem; }
+        .brand span { color: #7c3aed; }
+        .links { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+        .links a { color: #334155; text-decoration: none; font-weight: 850; }
+        .wrap { width: min(100%, 980px); margin: 0 auto; padding: 64px 24px 76px; }
+        .hero { margin-bottom: 26px; }
+        h1 { margin: 0 0 14px; font-size: clamp(2.3rem, 5vw, 4rem); letter-spacing: -0.04em; }
+        .intro { margin: 0; max-width: 760px; color: #516078; font-size: 1.1rem; line-height: 1.75; font-weight: 600; }
+        .card { background: rgba(255,255,255,.94); border: 1px solid #e2eaf6; border-radius: 18px; padding: 30px; box-shadow: 0 22px 54px rgba(15,23,42,.08); margin-top: 20px; }
+        h2 { margin: 0 0 14px; font-size: 1.25rem; }
+        ul { margin: 0; padding-left: 20px; color: #516078; line-height: 1.75; font-weight: 600; }
+        .footer { padding: 26px 46px; border-top: 1px solid #dfe8f7; background: rgba(255,255,255,.78); color: #64748b; display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; font-weight: 700; }
+        .footer a { color: #2563eb; text-decoration: none; font-weight: 900; }
+        .footer-links { display: flex; gap: 18px; flex-wrap: wrap; }
+        @media (max-width: 720px) { .nav { padding: 18px 22px; align-items: flex-start; flex-direction: column; gap: 12px; } }
+    </style>
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+</head>
+<body>
+    <nav class="nav">
+        <a class="brand" href="{% url 'index' %}">Resume <span>Analyzer AI</span></a>
+        <div class="links">
+            <a href="{% url 'index' %}">Home</a>
+            <a href="{% url 'index' %}#features">Features</a>
+            <a href="{% url 'index' %}#how-it-works">How It Works</a>
+            <a href="{% url 'pricing' %}">Pricing</a>
+            <button class="theme-toggle" type="button" aria-label="Toggle theme"></button>
+        </div>
+    </nav>
+    <main class="wrap">
+        <section class="hero">
+            <h1>{{ title }}</h1>
+            <p class="intro">{{ intro }}</p>
+        </section>
+        {% for section in sections %}
+        <section class="card">
+            <h2>{{ section.heading }}</h2>
+            <ul>{% for item in section.items %}<li>{{ item }}</li>{% endfor %}</ul>
+        </section>
+        {% endfor %}
+    </main>
+    <footer class="footer">
+        <span>Resume Analyzer AI</span>
+        <span class="footer-links">
+            <a href="{% url 'privacy_policy' %}">Privacy Policy</a>
+            <a href="{% url 'terms_and_conditions' %}">Terms &amp; Conditions</a>
+            <a href="{% url 'refund_policy' %}">Refund Policy</a>
+            <a href="{% url 'contact_us' %}">Contact Us</a>
+        </span>
+    </footer>
+    <script src="{% static 'js/theme.js' %}"></script>
+</body>
+</html>

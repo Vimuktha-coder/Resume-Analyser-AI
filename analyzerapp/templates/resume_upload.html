@@ -1,0 +1,498 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Resume - Resume Analyzer AI</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at left 18%, rgba(37, 99, 235, 0.1), transparent 26%),
+                        radial-gradient(circle at right 74%, rgba(139, 92, 246, 0.12), transparent 28%),
+                        linear-gradient(135deg, #eef4ff 0%, #f8fbff 46%, #f5f1ff 100%);
+            color: #172033;
+            padding: 28px;
+            display: grid;
+            place-items: center;
+        }
+
+        .upload-shell {
+            width: min(100%, 960px);
+            min-height: calc(100vh - 56px);
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid #e3e9f5;
+            border-radius: 18px;
+            box-shadow: 0 28px 70px rgba(15, 23, 42, 0.12);
+            padding: 30px 34px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-shell::before,
+        .upload-shell::after {
+            content: '';
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 1px solid rgba(37, 99, 235, 0.08);
+            pointer-events: none;
+        }
+
+        .upload-shell::before {
+            left: -70px;
+            top: 110px;
+        }
+
+        .upload-shell::after {
+            right: -70px;
+            bottom: 95px;
+        }
+
+        .topbar,
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-mark {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: #eef4ff;
+            color: #2563eb;
+            font-weight: 900;
+            box-shadow: inset 0 0 0 1px #dbe7ff;
+        }
+
+        .brand strong {
+            display: block;
+            font-size: 1rem;
+        }
+
+        .brand span,
+        .help {
+            color: #64748b;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .help {
+            text-decoration: none;
+        }
+
+        .content {
+            width: min(100%, 700px);
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .icon-orb {
+            width: 70px;
+            height: 70px;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            background: #f1e8ff;
+            color: #7c3aed;
+            font-size: 1.9rem;
+            box-shadow: 0 14px 30px rgba(124, 58, 237, 0.12);
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: 2rem;
+            letter-spacing: 0;
+        }
+
+        .subtitle {
+            width: min(100%, 460px);
+            margin: 0 auto 26px;
+            color: #64748b;
+            line-height: 1.55;
+            font-size: 0.98rem;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            align-items: center;
+            gap: 0;
+            margin: 0 auto 26px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            color: #a0abc0;
+            font-weight: 900;
+            font-size: 0.84rem;
+        }
+
+        .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: calc(50% + 70px);
+            width: calc(100% - 120px);
+            height: 1px;
+            background: #dce4f2;
+        }
+
+        .step.active {
+            color: #172033;
+        }
+
+        .step-badge {
+            width: 26px;
+            height: 26px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: #eef2ff;
+            color: #94a3b8;
+            font-size: 0.78rem;
+        }
+
+        .step.active .step-badge {
+            background: #4f46e5;
+            color: #ffffff;
+        }
+
+        .upload-zone {
+            border: 2px dashed #b8c6ff;
+            border-radius: 14px;
+            min-height: 235px;
+            display: grid;
+            place-items: center;
+            padding: 28px;
+            background: linear-gradient(180deg, rgba(248, 251, 255, 0.9), rgba(255, 255, 255, 0.9));
+            margin-bottom: 16px;
+        }
+
+        .cloud {
+            font-size: 3rem;
+            color: #6d5dfc;
+            margin-bottom: 12px;
+        }
+
+        .upload-zone h2 {
+            margin: 0 0 8px;
+            font-size: 1.08rem;
+        }
+
+        .upload-zone p {
+            margin: 0 0 16px;
+            color: #64748b;
+            font-size: 0.88rem;
+        }
+
+        input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .browse-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-width: 180px;
+            min-height: 42px;
+            border-radius: 8px;
+            border: 1px solid #c7d2fe;
+            color: #4f46e5;
+            background: #ffffff;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 10px 22px rgba(79, 70, 229, 0.08);
+        }
+
+        .file-help {
+            display: block;
+            margin-top: 14px;
+            color: #94a3b8;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .file-card {
+            min-height: 66px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 14px 18px;
+            border: 1px solid #e3e9f5;
+            border-radius: 8px;
+            background: #ffffff;
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
+            text-align: left;
+            margin-bottom: 14px;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        .pdf-icon {
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            border-radius: 8px;
+            background: #fee2e2;
+            color: #ef4444;
+            font-size: 0.72rem;
+            font-weight: 900;
+            flex: 0 0 auto;
+        }
+
+        .file-name {
+            display: block;
+            max-width: 360px;
+            font-weight: 900;
+            margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .file-size {
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+
+        .file-status {
+            color: #16a34a;
+            font-size: 0.84rem;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .role-card {
+            display: grid;
+            gap: 10px;
+            padding: 18px;
+            margin-bottom: 14px;
+            border: 1px solid #dbe5ff;
+            border-radius: 14px;
+            background: #ffffff;
+            box-shadow: 0 14px 34px rgba(37, 99, 235, 0.08);
+            text-align: left;
+        }
+
+        .role-card label {
+            color: #111827;
+            font-weight: 900;
+        }
+
+        .role-card span {
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .role-card select {
+            width: 100%;
+            min-height: 48px;
+            padding: 0 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            background: #ffffff;
+            color: #111827;
+            font: inherit;
+            font-weight: 800;
+            outline: none;
+        }
+
+        .security-note {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 42px;
+            padding: 0 16px;
+            border-radius: 8px;
+            background: #eef2ff;
+            color: #4f46e5;
+            font-size: 0.82rem;
+            font-weight: 800;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            min-height: 48px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #2563eb, #8b5cf6);
+            color: #ffffff;
+            font-size: 0.98rem;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 14px 30px rgba(79, 70, 229, 0.22);
+        }
+
+        .footer-note {
+            margin-top: 18px;
+            color: #94a3b8;
+            font-size: 0.82rem;
+            font-weight: 800;
+        }
+
+        .back-link {
+            display: inline-flex;
+            margin-top: 18px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 0.86rem;
+        }
+
+        @media (max-width: 760px) {
+            body {
+                padding: 14px;
+            }
+
+            .upload-shell {
+                padding: 22px 18px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                gap: 18px;
+                flex-direction: column;
+            }
+
+            .steps {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .step:not(:last-child)::after {
+                display: none;
+            }
+
+            .file-card {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+</head>
+<body>
+    <main class="upload-shell">
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-mark">AI</div>
+                <div>
+                    <strong>AI Resume Interviewer</strong>
+                    <span>Your AI Career Assistant</span>
+                </div>
+            </div>
+            <a class="help" href="{% url 'user_dashboard' %}">Need help?</a>
+        </header>
+
+        <section class="content">
+            <div class="icon-orb"></div>
+            <h1>Upload Your Resume</h1>
+            <p class="subtitle">Upload your resume and let AI create a personalized interview experience just for you.</p>
+
+            <div class="steps">
+                <div class="step active"><span class="step-badge">1</span>Upload Resume</div>
+                <div class="step"><span class="step-badge">2</span>AI Analysis</div>
+                <div class="step"><span class="step-badge">3</span>Interview Ready</div>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label class="upload-zone" for="resumeFile">
+                    <div>
+                        <div class="cloud"></div>
+                        <h2>Drag &amp; Drop your resume here</h2>
+                        <p>or</p>
+                        <span class="browse-btn"> Browse Resume</span>
+                        <span class="file-help">PDF, DOCX  Max size 5MB</span>
+                    </div>
+                    <input id="resumeFile" type="file" name="resume" accept=".pdf,.docx" required>
+                </label>
+
+                <div class="file-card">
+                    <div class="file-info">
+                        <div class="pdf-icon">PDF</div>
+                        <div>
+                            <div class="file-name" id="selectedFileName">
+                                {% if candidate and candidate.resumes.exists %}
+                                    {{ candidate.resumes.last.resume_file.name|cut:"resumes/uploaded/" }}
+                                {% else %}
+                                    No resume selected
+                                {% endif %}
+                            </div>
+                            <div class="file-size" id="selectedFileSize">
+                                {% if candidate and candidate.resumes.exists %}Uploaded resume{% else %}Choose a PDF or DOCX file{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-status" id="selectedFileStatus">
+                        {% if candidate and candidate.resumes.exists %} Upload complete{% else %}Awaiting upload{% endif %}
+                    </div>
+                </div>
+
+                <div class="security-note"> Your data is secure and will only be used to personalize your interview.</div>
+
+                <button class="submit-btn" type="submit">Upload Resume </button>
+            </form>
+
+            <div class="footer-note">Secure  Private  Encrypted</div>
+            <a class="back-link" href="{% url 'user_dashboard' %}"> Back to Dashboard</a>
+        </section>
+    </main>
+
+    <script>
+        const resumeFile = document.getElementById('resumeFile');
+        const selectedFileName = document.getElementById('selectedFileName');
+        const selectedFileSize = document.getElementById('selectedFileSize');
+        const selectedFileStatus = document.getElementById('selectedFileStatus');
+
+        resumeFile.addEventListener('change', () => {
+            const file = resumeFile.files[0];
+            if (!file) return;
+            selectedFileName.textContent = file.name;
+            selectedFileSize.textContent = Math.max(1, Math.round(file.size / 1024)) + ' KB';
+            selectedFileStatus.textContent = 'Ready to upload';
+        });
+    </script>
+    <script src="{% static 'js/theme.js' %}"></script>
+</body>
+</html>
+
+

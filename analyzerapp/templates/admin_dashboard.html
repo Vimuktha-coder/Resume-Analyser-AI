@@ -1,0 +1,1157 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Resume Analyzer AI</title>
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+    <style>
+        :root {
+            --bg: #f7f9ff;
+            --panel: #ffffff;
+            --soft: #f3f6ff;
+            --line: #dfe6f6;
+            --text: #10182f;
+            --muted: #657390;
+            --blue: #2563eb;
+            --purple: #7c3aed;
+            --green: #16a34a;
+            --orange: #f59e0b;
+            --red: #ef4444;
+            --shadow: 0 18px 45px rgba(37, 99, 235, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+        }
+
+        .admin-shell {
+            display: grid;
+            grid-template-columns: 238px minmax(0, 1fr);
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            padding: 28px 20px;
+            background: rgba(255, 255, 255, 0.94);
+            border-right: 1px solid var(--line);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .brand-icon,
+        .avatar,
+        .nav-icon,
+        .metric-icon,
+        .mini-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            color: var(--blue);
+            background: linear-gradient(135deg, #e0edff, #f1e8ff);
+            font-weight: 900;
+        }
+
+        .brand strong {
+            display: block;
+            font-size: 1.05rem;
+        }
+
+        .brand span {
+            color: var(--muted);
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .nav {
+            display: grid;
+            gap: 8px;
+        }
+
+        .nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 14px;
+            border-radius: 10px;
+            color: #52617d;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 0.92rem;
+        }
+
+        .nav a.active {
+            color: var(--blue);
+            background: linear-gradient(135deg, #eef4ff, #f3edff);
+        }
+
+        .nav-icon {
+            width: 18px;
+            height: 18px;
+            font-size: 1rem;
+        }
+
+        .upgrade {
+            position: absolute;
+            left: 20px;
+            right: 20px;
+            bottom: 26px;
+            padding: 22px 16px;
+            text-align: center;
+            border: 1px solid #e4d8ff;
+            border-radius: 14px;
+            background: #f6f0ff;
+        }
+
+        .upgrade strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .upgrade p {
+            margin: 0 0 14px;
+            color: var(--muted);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .upgrade button,
+        .primary-btn,
+        .save-btn,
+        .apply-btn,
+        .delete-btn {
+            border: 0;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 900;
+        }
+
+        .upgrade button {
+            width: 100%;
+            padding: 12px;
+            color: var(--purple);
+            background: #eadcff;
+        }
+
+        .main {
+            min-width: 0;
+            padding: 22px 28px 36px;
+        }
+
+        .topbar {
+            display: grid;
+            grid-template-columns: minmax(250px, 520px) 1fr auto;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .search {
+            position: relative;
+        }
+
+        .search span {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+        }
+
+        .search input,
+        .filters input,
+        .filters select,
+        .setup-input,
+        .status-select {
+            width: 100%;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: #fff;
+            color: var(--text);
+            font: inherit;
+            outline: none;
+        }
+
+        .search input {
+            height: 44px;
+            padding: 0 16px 0 44px;
+        }
+
+        .top-actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .icon-btn {
+            position: relative;
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--line);
+            border-radius: 50%;
+            background: #fff;
+            color: var(--text);
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .badge {
+            position: absolute;
+            top: -3px;
+            right: -2px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--red);
+            color: #fff;
+            font-size: 0.7rem;
+            line-height: 18px;
+        }
+
+        .admin-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 900;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            color: #fff;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+        }
+
+        .page-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: flex-end;
+            margin-bottom: 22px;
+        }
+
+        .page-head h1 {
+            margin: 0 0 8px;
+            font-size: 1.55rem;
+        }
+
+        .page-head p {
+            margin: 0;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .primary-btn {
+            padding: 13px 20px;
+            color: #fff;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            box-shadow: 0 16px 30px rgba(79, 70, 229, 0.22);
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .metric-card,
+        .candidates-card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .metric-card {
+            display: flex;
+            gap: 14px;
+            padding: 20px;
+        }
+
+        .metric-icon {
+            flex: 0 0 auto;
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            font-size: 1.3rem;
+            font-weight: 900;
+        }
+
+        .metric-icon.blue { color: var(--blue); background: #e8f1ff; }
+        .metric-icon.purple { color: var(--purple); background: #f0e7ff; }
+        .metric-icon.green { color: var(--green); background: #dcfce7; }
+        .metric-icon.orange { color: var(--orange); background: #fff3dc; }
+
+        .metric-label {
+            margin: 0 0 7px;
+            color: var(--muted);
+            font-size: 0.83rem;
+            font-weight: 800;
+        }
+
+        .metric-value {
+            margin: 0;
+            font-size: 1.45rem;
+            font-weight: 950;
+        }
+
+        .metric-note {
+            margin: 7px 0 0;
+            color: var(--green);
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        .candidates-card {
+            overflow: hidden;
+        }
+
+        .card-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: center;
+            padding: 22px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .card-head h2 {
+            margin: 0 0 6px;
+            font-size: 1.1rem;
+        }
+
+        .card-head p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.88rem;
+            font-weight: 650;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: 210px 120px 135px 120px 82px 92px;
+            gap: 10px;
+        }
+
+        .filters input,
+        .filters select,
+        .export-btn {
+            height: 38px;
+            padding: 0 12px;
+            font-size: 0.86rem;
+        }
+
+        .export-btn,
+        .filter-btn {
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            color: var(--text);
+            background: #fff;
+            font-weight: 850;
+        }
+
+        .filter-btn {
+            color: #ffffff;
+            border-color: transparent;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+        }
+
+        .table-wrap {
+            overflow-x: visible;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 0;
+            table-layout: fixed;
+        }
+
+        th {
+            padding: 13px 12px;
+            text-align: left;
+            color: #64748b;
+            background: #f8faff;
+            border-bottom: 1px solid var(--line);
+            font-size: 0.76rem;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #edf1fa;
+            vertical-align: middle;
+            font-size: 0.9rem;
+            overflow-wrap: anywhere;
+        }
+
+        .candidate-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 170px;
+        }
+
+        .candidate-photo {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            font-weight: 900;
+        }
+
+        .candidate-cell strong,
+        .role-title {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 900;
+        }
+
+        .subtext {
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 650;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .mini-action {
+            width: 34px;
+            height: 34px;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            color: var(--blue);
+            background: #fff;
+            text-decoration: none;
+            font-weight: 900;
+        }
+
+        .mini-action.video {
+            color: var(--purple);
+        }
+
+        .setup-grid {
+            display: grid;
+            grid-template-columns: minmax(130px, 1fr) 72px 82px;
+            gap: 8px;
+            max-width: 320px;
+        }
+
+        .setup-input,
+        .status-select {
+            height: 38px;
+            padding: 0 10px;
+            font-size: 0.86rem;
+            font-weight: 750;
+        }
+
+        .score-input {
+            width: 74px;
+            height: 34px;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            padding: 0 8px;
+            color: var(--text);
+            background: #fff;
+            font-weight: 900;
+        }
+
+        .review-score {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        .setup-hint {
+            display: flex;
+            gap: 14px;
+            margin-top: 7px;
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 700;
+            flex-wrap: wrap;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 82px;
+            padding: 7px 10px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 900;
+        }
+
+        .status-pill.accepted { color: var(--green); background: #dcfce7; }
+        .status-pill.pending { color: #b7791f; background: #fff7d6; }
+        .status-pill.rejected { color: #dc2626; background: #fee2e2; }
+
+        .score {
+            font-weight: 900;
+            color: #33415c;
+        }
+
+        .action-stack {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .save-btn {
+            height: 38px;
+            padding: 0 14px;
+            color: var(--purple);
+            background: #f0e8ff;
+            white-space: nowrap;
+        }
+
+        .apply-btn {
+            height: 32px;
+            margin-top: 10px;
+            padding: 0 12px;
+            color: #ffffff;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+        }
+
+        .delete-btn {
+            height: 38px;
+            padding: 0 14px;
+            color: #dc2626;
+            background: #fee2e2;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            padding: 18px 22px;
+        }
+
+        .page-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .page-links a,
+        .page-links span {
+            min-width: 34px;
+            height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 900;
+        }
+
+        .page-links .current {
+            color: #fff;
+            border-color: transparent;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        }
+
+        .logout-link {
+            color: #52617d;
+            text-decoration: none;
+            font-weight: 900;
+        }
+
+        .empty {
+            padding: 44px;
+            text-align: center;
+            color: var(--muted);
+            font-weight: 750;
+        }
+
+        [data-theme="dark"] {
+            --bg: #07111f;
+            --panel: rgba(15, 23, 42, 0.92);
+            --soft: rgba(30, 41, 59, 0.76);
+            --line: rgba(148, 163, 184, 0.22);
+            --text: #eaf1ff;
+            --muted: #9fb0ca;
+            --shadow: 0 24px 54px rgba(0, 0, 0, 0.28);
+        }
+
+        [data-theme="dark"] .sidebar,
+        [data-theme="dark"] .search input,
+        [data-theme="dark"] .filters input,
+        [data-theme="dark"] .filters select,
+        [data-theme="dark"] .setup-input,
+        [data-theme="dark"] .status-select,
+        [data-theme="dark"] .score-input,
+        [data-theme="dark"] .export-btn,
+        [data-theme="dark"] .filter-btn,
+        [data-theme="dark"] .icon-btn,
+        [data-theme="dark"] .mini-action,
+        [data-theme="dark"] th {
+            background: rgba(15, 23, 42, 0.9);
+            color: var(--text);
+        }
+
+        [data-theme="dark"] .upgrade,
+        [data-theme="dark"] .nav a.active {
+            background: rgba(79, 70, 229, 0.16);
+        }
+
+        [data-theme="dark"] .filter-btn,
+        [data-theme="dark"] .apply-btn {
+            color: #ffffff;
+            border-color: transparent;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+        }
+
+        @media (max-width: 1180px) {
+            .admin-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+                height: auto;
+            }
+
+            .upgrade {
+                position: static;
+                margin-top: 24px;
+            }
+
+            .metrics {
+                grid-template-columns: repeat(2, minmax(180px, 1fr));
+            }
+
+            .topbar,
+            .card-head {
+                grid-template-columns: 1fr;
+                display: grid;
+            }
+
+            .filters {
+                grid-template-columns: repeat(2, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">AI</div>
+                <div>
+                    <strong>Resume Analyzer AI</strong>
+                    <span>Admin Panel</span>
+                </div>
+            </div>
+
+            <nav class="nav">
+                <a class="{% if admin_section == 'dashboard' %}active{% endif %}" href="{% url 'admin_dashboard' %}"><span class="nav-icon"></span>Dashboard</a>
+                <a class="{% if admin_section == 'feedback' %}active{% endif %}" href="{% url 'admin_feedback' %}"><span class="nav-icon"></span>Feedback</a>
+                <a class="{% if admin_section == 'analytics' %}active{% endif %}" href="{% url 'admin_analytics' %}"><span class="nav-icon"></span>Analytics</a>
+                <a class="{% if admin_section == 'settings' %}active{% endif %}" href="{% url 'admin_settings' %}"><span class="nav-icon"></span>Settings</a>
+                <a class="{% if admin_section == 'users' %}active{% endif %}" href="{% url 'admin_users' %}"><span class="nav-icon"></span>Users</a>
+            </nav>
+
+            <div class="upgrade">
+                <strong>Admin Tools</strong>
+                <p>Review videos, track feedback, and publish candidate results.</p>
+                <button type="button">Manage Setup</button>
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <form class="search" method="get" action="{% url 'admin_dashboard' %}">
+                    <span></span>
+                    <input type="search" name="q" value="{{ search }}" placeholder="Search by name, email, or role...">
+                </form>
+                <div></div>
+                <div class="top-actions">
+                    <button class="theme-toggle" type="button" aria-label="Toggle theme"></button>
+                    <button class="icon-btn" type="button" aria-label="Notifications"><span class="badge">{{ pending_count }}</span></button>
+                    <div class="admin-user">
+                        <span class="avatar">A</span>
+                        <span>Admin</span>
+                    </div>
+                    <a class="logout-link" href="{% url 'admin_logout' %}">Logout</a>
+                </div>
+            </header>
+
+            <section class="page-head" id="overview">
+                <div>
+                    <h1>{{ page_title }}</h1>
+                    <p>{{ page_subtitle }}</p>
+                </div>
+                <button class="primary-btn" type="button">+ Add Candidate</button>
+            </section>
+
+            {% if admin_section == 'dashboard' or admin_section == 'analytics' %}
+            <section class="metrics">
+                <article class="metric-card">
+                    <div class="metric-icon purple"></div>
+                    <div>
+                        <p class="metric-label">Total Users</p>
+                        <p class="metric-value">{{ total_candidates }}</p>
+                        <p class="metric-note">Current records</p>
+                    </div>
+                </article>
+                <article class="metric-card">
+                    <div class="metric-icon blue"></div>
+                    <div>
+                        <p class="metric-label">Interviews Conducted</p>
+                        <p class="metric-value">{{ interviews_conducted }}</p>
+                        <p class="metric-note">Video submissions</p>
+                    </div>
+                </article>
+                <article class="metric-card">
+                    <div class="metric-icon green"></div>
+                    <div>
+                        <p class="metric-label">Accepted</p>
+                        <p class="metric-value">{{ accepted_count }}</p>
+                        <p class="metric-note">Visible to users</p>
+                    </div>
+                </article>
+                <article class="metric-card">
+                    <div class="metric-icon orange"></div>
+                    <div>
+                        <p class="metric-label">Pending</p>
+                        <p class="metric-value">{{ pending_count }}</p>
+                        <p class="metric-note">Needs review</p>
+                    </div>
+                </article>
+            </section>
+            {% endif %}
+
+            {% if admin_section == 'analytics' %}
+            <section class="candidates-card">
+                <div class="card-head">
+                    <div>
+                        <h2>Interview Status Chart</h2>
+                        <p>Accepted, pending, and rejected interview outcomes.</p>
+                    </div>
+                </div>
+                <div style="padding: 22px; display: grid; grid-template-columns: 190px 1fr; gap: 24px; align-items: center;">
+                    <div style="width: 170px; height: 170px; border-radius: 50%; background: conic-gradient(#16a34a 0 {{ accepted_percent }}%, #f59e0b {{ accepted_percent }}% {{ accepted_plus_pending_percent }}%, #ef4444 {{ accepted_plus_pending_percent }}% 100%); display: grid; place-items: center;">
+                        <div style="width: 92px; height: 92px; border-radius: 50%; background: var(--panel); display: grid; place-items: center; font-weight: 950;">{{ interviews_conducted }}</div>
+                    </div>
+                    <div style="display: grid; gap: 16px;">
+                        <div><strong>Accepted</strong> <div style="height: 14px; width: {{ accepted_percent }}%; background: #16a34a; border-radius: 999px;"></div><span class="subtext">{{ accepted_percent }}%</span></div>
+                        <div><strong>Pending</strong> <div style="height: 14px; width: {{ pending_percent }}%; background: #f59e0b; border-radius: 999px;"></div><span class="subtext">{{ pending_percent }}%</span></div>
+                        <div><strong>Rejected</strong> <div style="height: 14px; width: {{ rejected_percent }}%; background: #ef4444; border-radius: 999px;"></div><span class="subtext">{{ rejected_percent }}%</span></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="metrics" style="margin-top: 22px;">
+                <article class="metric-card">
+                    <div class="metric-icon blue"></div>
+                    <div>
+                        <p class="metric-label">Resume Upload Statistics</p>
+                        <p class="metric-value">{{ total_resumes_uploaded }}</p>
+                        <p class="metric-note">PDF {{ pdf_percent }}%  DOCX {{ docx_percent }}%</p>
+                    </div>
+                </article>
+                <article class="metric-card">
+                    <div class="metric-icon purple"></div>
+                    <div>
+                        <p class="metric-label">Total Interviews</p>
+                        <p class="metric-value">{{ interviews_conducted }}</p>
+                        <p class="metric-note">Conducted on platform</p>
+                    </div>
+                </article>
+            </section>
+
+            <section class="candidates-card" style="margin-top: 22px;">
+                <div class="card-head"><div><h2>Interview Trend</h2><p>Monthly interviews conducted.</p></div></div>
+                <div style="padding: 22px; display: grid; gap: 14px;">
+                    {% for item in interview_trend %}
+                    <div style="display: grid; grid-template-columns: 52px 1fr 40px; gap: 12px; align-items: center;">
+                        <strong>{{ item.month }}</strong>
+                        <div style="height: 16px; width: {% widthratio item.count max_trend 100 %}%; background: linear-gradient(135deg, #2563eb, #7c3aed); border-radius: 999px;"></div>
+                        <span class="score">{{ item.count }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <section class="candidates-card" style="margin-top: 22px;">
+                <div class="card-head"><div><h2>Most Common Roles</h2><p>Roles selected by candidates.</p></div></div>
+                <div style="padding: 22px; display: grid; gap: 14px;">
+                    {% for item in role_counts %}
+                    <div style="display: grid; grid-template-columns: 180px 1fr 40px; gap: 12px; align-items: center;">
+                        <strong>{{ item.role }}</strong>
+                        <div style="height: 16px; width: {% widthratio item.count max_role_count 100 %}%; background: #8b5cf6; border-radius: 999px;"></div>
+                        <span class="score">{{ item.count }}</span>
+                    </div>
+                    {% empty %}
+                    <span class="subtext">No role data available.</span>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <section class="candidates-card" style="margin-top: 22px;">
+                <div class="card-head"><div><h2>Candidate Performance Distribution</h2><p>Histogram of candidate interview scores.</p></div></div>
+                <div style="padding: 22px; display: grid; gap: 14px;">
+                    {% for label, count in score_distribution.items %}
+                    <div style="display: grid; grid-template-columns: 90px 1fr 40px; gap: 12px; align-items: center;">
+                        <strong>{{ label }}</strong>
+                        <div style="height: 16px; width: {% widthratio count max_score_bucket 100 %}%; background: #2563eb; border-radius: 999px;"></div>
+                        <span class="score">{{ count }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            {% if admin_section == 'interviews' %}
+            <section class="candidates-card">
+                <div class="card-head">
+                    <div>
+                        <h2>Interview Submissions</h2>
+                        <p>Review candidate videos and accept or reject the final result.</p>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Candidate</th>
+                                <th>Selected Role</th>
+                                <th>Video</th>
+                                <th>Answer Doc</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for candidate in candidates %}
+                            <tr>
+                                <td><strong>{{ candidate.name }}</strong><br><span class="subtext">{{ candidate.email }}</span></td>
+                                <td>{{ candidate.interview_role }}<br><span class="subtext">{{ candidate.interview_duration }} min  {{ candidate.interview_question_count }} questions</span></td>
+                                <td>
+                                    {% if candidate.interview_video %}
+                                        <a class="mini-action video" href="{{ candidate.interview_video.url }}" target="_blank"></a>
+                                    {% else %}
+                                        <span class="subtext">Not submitted</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if candidate.interview_transcript %}
+                                        <a class="mini-action" href="{% url 'download_transcript_doc' candidate.id %}" title="Download answer transcript">DOC</a>
+                                    {% else %}
+                                        <span class="subtext">No transcript</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <form id="review-submission-{{ candidate.id }}" method="POST" action="{% url 'update_status' candidate.id %}">{% csrf_token %}</form>
+                                    <label class="review-score">
+                                        Score
+                                        <input form="review-submission-{{ candidate.id }}" class="score-input" type="number" name="score" min="0" max="100" step="1" value="{{ candidate.score|default:0|floatformat:0 }}">
+                                    </label>
+                                    <select form="review-submission-{{ candidate.id }}" class="status-select" name="status">
+                                        <option value="Pending" {% if candidate.status == "Pending" %}selected{% endif %}>Pending</option>
+                                        <option value="Accepted" {% if candidate.status == "Accepted" %}selected{% endif %}>Accepted</option>
+                                        <option value="Rejected" {% if candidate.status == "Rejected" %}selected{% endif %}>Rejected</option>
+                                    </select>
+                                    <button form="review-submission-{{ candidate.id }}" class="apply-btn" type="submit">Apply Review</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            {% endif %}
+
+            {% if admin_section == 'feedback' %}
+            <section class="metrics">
+                <article class="metric-card"><div class="metric-icon green"></div><div><p class="metric-label">Accepted Results</p><p class="metric-value">{{ accepted_count }}</p><p class="metric-note">Published to users</p></div></article>
+                <article class="metric-card"><div class="metric-icon orange"></div><div><p class="metric-label">Pending Reviews</p><p class="metric-value">{{ pending_count }}</p><p class="metric-note">Awaiting admin action</p></div></article>
+            </section>
+            {% endif %}
+
+            {% if admin_section == 'feedback' %}
+            <section class="candidates-card">
+                <div class="card-head">
+                    <div>
+                        <h2>User Feedback</h2>
+                        <p>Feedback submitted by candidates after completing the interview.</p>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Candidate</th>
+                                <th>Role</th>
+                                <th>AI Model Rating</th>
+                                <th>Platform Rating</th>
+                                <th>Feedback Details</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for feedback in feedbacks %}
+                            <tr>
+                                <td><strong>{{ feedback.candidate.name }}</strong><br><span class="subtext">{{ feedback.candidate.email }}</span></td>
+                                <td>{{ feedback.candidate.interview_role }}</td>
+                                <td><span class="score">{{ feedback.ai_rating }}/5</span></td>
+                                <td><span class="score">{{ feedback.platform_rating }}/5</span></td>
+                                <td>{{ feedback.details|default:"No extra details" }}</td>
+                                <td>{{ feedback.created_at|date:"d M Y, h:i A" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td class="empty" colspan="6">No user feedback has been submitted yet.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            {% endif %}
+
+            {% if admin_section == 'settings' %}
+            <section class="candidates-card">
+                <div class="card-head">
+                    <div>
+                        <h2>Interview Settings</h2>
+                        <p>Users now select their own role after uploading a resume. Admin reviews the submitted interview result.</p>
+                    </div>
+                </div>
+                <div style="padding: 22px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px;">
+                    <div class="metric-card"><div class="metric-icon blue"></div><div><p class="metric-label">General Settings</p><p class="metric-value">Resume Analyzer AI</p><p class="metric-note">Company: ABC Technologies  Support: admin@company.com</p></div></div>
+                    <div class="metric-card"><div class="metric-icon purple"></div><div><p class="metric-label">Interview Settings</p><p class="metric-value">20 min  15 Qs</p><p class="metric-note">Passing score 70  Allow retake: Yes</p></div></div>
+                    <div class="metric-card"><div class="metric-icon green"></div><div><p class="metric-label">AI Settings</p><p class="metric-value">InterviewBot</p><p class="metric-note">Voice: Female  Language: English  Difficulty: Medium</p></div></div>
+                    <div class="metric-card"><div class="metric-icon orange"></div><div><p class="metric-label">User Management</p><p class="metric-value">Registration ON</p><p class="metric-note">Email verification ON  Auto approval OFF</p></div></div>
+                    <div class="metric-card"><div class="metric-icon blue"></div><div><p class="metric-label">Security Settings</p><p class="metric-value">2FA Available</p><p class="metric-note">Change password  Session timeout 30 mins  Login history</p></div></div>
+                    <div class="metric-card"><div class="metric-icon purple"></div><div><p class="metric-label">Notification Settings</p><p class="metric-value">Email Notifications</p><p class="metric-note">New user  Interview completed  Low score alert</p></div></div>
+                </div>
+            </section>
+            {% endif %}
+
+            {% if admin_section == 'users' %}
+            <section class="candidates-card">
+                <div class="card-head">
+                    <div>
+                        <h2>Registered Users</h2>
+                        <p>All candidate accounts currently available in the system.</p>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>State</th><th>Joined</th></tr></thead>
+                        <tbody>
+                            {% for candidate in candidates %}
+                            <tr><td>{{ candidate.name }}</td><td>{{ candidate.email }}</td><td>{{ candidate.phone }}</td><td>{{ candidate.state }}</td><td>{{ candidate.submitted_at|date:"d M Y" }}</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            {% endif %}
+
+            {% if admin_section == 'dashboard' or admin_section == 'candidates' %}
+            <section class="candidates-card" id="candidates">
+                <div class="card-head">
+                    <div>
+                        <h2>Candidates</h2>
+                        <p>Users select their role after uploading a resume. Admin reviews submitted interviews and publishes results here.</p>
+                    </div>
+                    <form class="filters" method="get" action="{% url 'admin_dashboard' %}">
+                        <input type="search" name="q" value="{{ search }}" placeholder="Search candidates...">
+                        <select name="status">
+                            <option value="">Status: All</option>
+                            <option value="Pending" {% if status_filter == 'Pending' %}selected{% endif %}>Pending</option>
+                            <option value="Accepted" {% if status_filter == 'Accepted' %}selected{% endif %}>Accepted</option>
+                            <option value="Rejected" {% if status_filter == 'Rejected' %}selected{% endif %}>Rejected</option>
+                        </select>
+                        <select name="role">
+                            <option value="">Role: All</option>
+                            {% for role in roles %}
+                                <option value="{{ role }}" {% if role_filter == role %}selected{% endif %}>{{ role }}</option>
+                            {% endfor %}
+                        </select>
+                        <select name="sort">
+                            <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest first</option>
+                            <option value="oldest" {% if sort == 'oldest' %}selected{% endif %}>Oldest first</option>
+                            <option value="score" {% if sort == 'score' %}selected{% endif %}>Highest score</option>
+                        </select>
+                        <button class="filter-btn" type="submit">Apply</button>
+                        <button class="export-btn" type="submit" name="export" value="csv">Export</button>
+                    </form>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <colgroup>
+                            <col style="width: 13%;">
+                            <col style="width: 14%;">
+                            <col style="width: 10%;">
+                            <col style="width: 8%;">
+                            <col style="width: 21%;">
+                            <col style="width: 14%;">
+                            <col style="width: 9%;">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>Candidate</th>
+                                <th>Email</th>
+                                <th>Resume / Video</th>
+                                <th>Answer Doc</th>
+                                <th>Selected Role</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for candidate in candidates %}
+                            <tr>
+                                <td>
+                                    <div class="candidate-cell">
+                                        <span class="candidate-photo">{{ candidate.name|first|upper }}</span>
+                                        <div>
+                                            <strong>{{ candidate.name }}</strong>
+                                            <span class="subtext">Added on {{ candidate.submitted_at|date:"d M Y" }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ candidate.email }}</td>
+                                <td>
+                                    <div class="file-actions">
+                                        {% for resume in candidate.resumes.all %}
+                                            <a class="mini-action" href="{{ resume.resume_file.url }}" download title="Download resume">PDF</a>
+                                        {% empty %}
+                                            <span class="subtext">No resume</span>
+                                        {% endfor %}
+                                        {% if candidate.interview_video %}
+                                            <a class="mini-action video" href="{{ candidate.interview_video.url }}" target="_blank" title="View interview video"></a>
+                                        {% else %}
+                                            <span class="subtext">No video</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if candidate.interview_transcript %}
+                                        <a class="mini-action" href="{% url 'download_transcript_doc' candidate.id %}" title="Download answer transcript">DOC</a>
+                                    {% else %}
+                                        <span class="subtext">No doc</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <strong class="role-title">{{ candidate.interview_role }}</strong>
+                                    <div class="setup-hint">
+                                        <span>{{ candidate.interview_duration }} min</span>
+                                        <span>{{ candidate.interview_question_count }} questions</span>
+                                        <span>Selected by user</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <form id="review-{{ candidate.id }}" method="POST" action="{% url 'update_status' candidate.id %}">{% csrf_token %}</form>
+                                    <label class="review-score">
+                                        Score
+                                        <input form="review-{{ candidate.id }}" class="score-input" type="number" name="score" min="0" max="100" step="1" value="{{ candidate.score|default:0|floatformat:0 }}">
+                                    </label>
+                                    <select form="review-{{ candidate.id }}" class="status-select" name="status">
+                                        <option value="Pending" {% if candidate.status == "Pending" %}selected{% endif %}>Pending</option>
+                                        <option value="Accepted" {% if candidate.status == "Accepted" %}selected{% endif %}>Accepted</option>
+                                        <option value="Rejected" {% if candidate.status == "Rejected" %}selected{% endif %}>Rejected</option>
+                                    </select>
+                                    <button form="review-{{ candidate.id }}" class="apply-btn" type="submit">Apply Review</button>
+                                    <div style="margin-top: 8px;">
+                                        <span class="status-pill {% if candidate.status == 'Accepted' %}accepted{% elif candidate.status == 'Rejected' %}rejected{% else %}pending{% endif %}">
+                                            {{ candidate.status }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="action-stack">
+                                        <form method="POST" action="{% url 'delete_candidate' candidate.id %}" onsubmit="return confirm('Delete this candidate permanently?');">
+                                            {% csrf_token %}
+                                            <button class="delete-btn" type="submit">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td class="empty" colspan="8">No candidates have registered yet.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <span class="subtext">
+                        Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} candidates
+                    </span>
+                    <div class="page-links">
+                        {% if page_obj.has_previous %}
+                            <a href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ page_obj.previous_page_number }}"></a>
+                        {% endif %}
+
+                        {% for page_number in page_obj.paginator.page_range %}
+                            {% if page_number == page_obj.number %}
+                                <span class="current">{{ page_number }}</span>
+                            {% else %}
+                                <a href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ page_number }}">{{ page_number }}</a>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <a href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ page_obj.next_page_number }}"></a>
+                        {% endif %}
+                    </div>
+                </div>
+            </section>
+            {% endif %}
+        </main>
+    </div>
+
+    <script src="{% static 'js/theme.js' %}"></script>
+</body>
+</html>
+

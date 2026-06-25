@@ -1,0 +1,202 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Analytics - Resume Analyzer AI</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #f6f8ff;
+            color: #172033;
+        }
+        .app-shell {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 236px 1fr;
+        }
+        .sidebar {
+            background: #ffffff;
+            border-right: 1px solid #e3e9f5;
+            padding: 28px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+        .brand, .profile { display: flex; align-items: center; gap: 12px; }
+        .brand-mark, .avatar {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: #eef4ff;
+            color: #2563eb;
+            font-weight: 900;
+        }
+        .brand strong { display: block; }
+        .brand span { color: #64748b; font-size: 0.82rem; font-weight: 700; }
+        .nav { display: grid; gap: 8px; }
+        .nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 44px;
+            padding: 0 14px;
+            border-radius: 8px;
+            color: #637089;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .nav a.active, .nav a:hover { background: #eef4ff; color: #2563eb; }
+        .main { padding: 30px; }
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .topbar h1 { margin: 0; font-size: 1.7rem; }
+        .profile { color: #172033; font-weight: 800; text-decoration: none; }
+        .avatar { border-radius: 50%; background: #6d28d9; color: #fff; }
+        .hero, .card {
+            background: #ffffff;
+            border: 1px solid #e3e9f5;
+            border-radius: 8px;
+            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
+        }
+        .hero {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 220px;
+            gap: 24px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .hero h2 { margin: 0 0 10px; font-size: 1.5rem; }
+        .hero p { margin: 0; color: #64748b; line-height: 1.65; }
+        .ring {
+            width: 150px;
+            height: 150px;
+            margin: auto;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: conic-gradient(#2563eb {{ progress }}%, #e8eef8 0);
+            position: relative;
+            font-size: 1.7rem;
+            font-weight: 900;
+        }
+        .ring::before {
+            content: '';
+            position: absolute;
+            inset: 16px;
+            border-radius: 50%;
+            background: #ffffff;
+        }
+        .ring span { position: relative; z-index: 1; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .card { padding: 20px; }
+        .label { color: #64748b; font-size: 0.8rem; font-weight: 800; margin-bottom: 8px; }
+        .value { font-size: 1.45rem; font-weight: 900; }
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 20px;
+        }
+        .timeline { display: grid; gap: 14px; }
+        .timeline-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 14px;
+            border-radius: 8px;
+            background: #f8fbff;
+            color: #64748b;
+        }
+        .timeline-row strong { color: #172033; }
+        .bar { height: 10px; border-radius: 999px; background: #e8eef8; overflow: hidden; }
+        .bar span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #2563eb, #8b5cf6); }
+        @media (max-width: 980px) {
+            .app-shell, .hero, .status-grid { grid-template-columns: 1fr; }
+            .sidebar { position: static; height: auto; }
+            .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 640px) {
+            .grid { grid-template-columns: 1fr; }
+            .main { padding: 18px; }
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">AI</div>
+                <div><strong>AI Interview</strong><span>Assistant</span></div>
+            </div>
+            <nav class="nav">
+                <a href="{% url 'user_dashboard' %}"><span></span>Dashboard</a>
+                <a href="{% url 'upload_resume' %}"><span></span>Resume</a>
+                <a class="active" href="{% url 'user_analytics' %}"><span></span>Analytics</a>
+                <a href="{% url 'user_logout' %}"><span></span>Logout</a>
+            </nav>
+        </aside>
+        <main class="main">
+            <header class="topbar">
+                <h1>Analytics</h1>
+                <button class="theme-toggle" type="button" aria-label="Toggle theme"></button>
+                <a class="profile" href="{% url 'user_dashboard' %}">
+                    <span class="avatar">{{ candidate.name|slice:":2"|upper }}</span>
+                    <span>{{ candidate.name }}</span>
+                </a>
+            </header>
+            <section class="hero">
+                <div>
+                    <h2>Your Interview Readiness</h2>
+                    <p>Track resume upload, interview completion, admin review status, and score progress from one focused analytics view.</p>
+                </div>
+                <div class="ring"><span>{{ progress }}%</span></div>
+            </section>
+            <section class="grid">
+                <div class="card"><div class="label">Resume</div><div class="value">{% if candidate.resumes.exists %}Uploaded{% else %}Missing{% endif %}</div></div>
+                <div class="card"><div class="label">Interview</div><div class="value">{% if candidate.interview_video %}Done{% else %}Pending{% endif %}</div></div>
+                <div class="card"><div class="label">Admin Status</div><div class="value">{{ candidate.status }}</div></div>
+                <div class="card"><div class="label">Score</div><div class="value">{{ candidate.score|default:"--" }}</div></div>
+            </section>
+            <section class="status-grid">
+                <div class="card">
+                    <h3>Progress Timeline</h3>
+                    <div class="timeline">
+                        <div class="timeline-row"><strong>Resume Uploaded</strong><span>{% if candidate.resumes.exists %}Completed{% else %}Pending{% endif %}</span></div>
+                        <div class="timeline-row"><strong>Interview Submitted</strong><span>{% if candidate.interview_video %}Completed{% else %}Pending{% endif %}</span></div>
+                        <div class="timeline-row"><strong>Admin Review</strong><span>{{ candidate.status }}</span></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Score Breakdown</h3>
+                    <div class="label">Overall completion</div>
+                    <div class="bar"><span style="width: {{ progress }}%;"></span></div>
+                    <p>Role: <strong>{{ candidate.interview_role }}</strong></p>
+                    <p>Duration: <strong>{{ candidate.interview_duration }} minutes</strong></p>
+                    <p>Questions: <strong>{{ candidate.interview_question_count }}</strong></p>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="{% static 'js/theme.js' %}"></script>
+</body>
+</html>
+

@@ -1,0 +1,832 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resume Analyzer AI</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #f3f7ff;
+            color: #111936;
+        }
+
+        .site-shell {
+            min-height: 100vh;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 10% 85%, rgba(14, 165, 233, 0.18), transparent 24%),
+                radial-gradient(circle at 86% 55%, rgba(139, 92, 246, 0.18), transparent 30%),
+                linear-gradient(135deg, #f8fbff 0%, #eef5ff 48%, #f4eefe 100%);
+        }
+
+        .navbar {
+            height: 88px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            padding: 0 48px;
+            background: rgba(255, 255, 255, 0.78);
+            border-bottom: 1px solid #dfe8f7;
+            backdrop-filter: blur(18px);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            color: #111936;
+        }
+
+        .brand-bot {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            display: grid;
+            place-items: center;
+            background: #eef4ff;
+            color: #2563eb;
+            font-weight: 900;
+            box-shadow: inset 0 0 0 1px #dce7ff, 0 12px 22px rgba(37, 99, 235, 0.12);
+            position: relative;
+        }
+
+        .brand-bot::before,
+        .brand-bot::after {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #8b5cf6;
+        }
+
+        .brand-bot::before {
+            left: -8px;
+            top: 12px;
+        }
+
+        .brand-bot::after {
+            right: -9px;
+            bottom: 12px;
+        }
+
+        .brand-title {
+            font-size: 1.85rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-title span {
+            color: #7c3aed;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 34px;
+        }
+
+        .nav-links a {
+            color: #334155;
+            text-decoration: none;
+            font-weight: 800;
+            padding: 10px 0;
+        }
+
+        .nav-links a.active {
+            color: #2563eb;
+            border-bottom: 3px solid #2563eb;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 42px;
+            padding: 0 22px;
+            border-radius: 10px;
+            border: 1px solid #dbe4f2;
+            background: #ffffff;
+            color: #172033;
+            text-decoration: none;
+            font-weight: 900;
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            border-color: transparent;
+            color: #ffffff;
+            box-shadow: 0 14px 30px rgba(37, 99, 235, 0.22);
+        }
+
+        .btn.purple {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            border-color: transparent;
+            color: #ffffff;
+            box-shadow: 0 14px 30px rgba(124, 58, 237, 0.22);
+        }
+
+        .btn.outline {
+            border-color: #93a8ff;
+            color: #2563eb;
+        }
+
+        .hero {
+            width: min(100%, 1280px);
+            min-height: calc(100vh - 88px);
+            margin: 0 auto;
+            padding: 56px 48px 28px;
+            display: grid;
+            grid-template-columns: 1fr 0.95fr;
+            gap: 36px;
+            align-items: center;
+            position: relative;
+        }
+
+        .hero-copy {
+            position: relative;
+            z-index: 2;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.8);
+            color: #1d4ed8;
+            font-weight: 900;
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.08);
+            margin-bottom: 26px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(3.2rem, 6vw, 5.25rem);
+            line-height: 0.98;
+            letter-spacing: -0.04em;
+        }
+
+        h1 span {
+            background: linear-gradient(135deg, #2563eb, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .lead {
+            width: min(100%, 620px);
+            margin: 26px 0 24px;
+            color: #516078;
+            font-size: 1.32rem;
+            line-height: 1.65;
+            font-weight: 600;
+        }
+
+        .accent-line {
+            width: 112px;
+            height: 5px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #0ea5e9, #7c3aed);
+            margin-bottom: 32px;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-bottom: 44px;
+        }
+
+        .hero-actions .btn {
+            min-width: 176px;
+            min-height: 58px;
+            font-size: 1rem;
+        }
+
+        .feature-strip {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            width: min(100%, 720px);
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid #e3e9f5;
+            border-radius: 16px;
+            box-shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
+        }
+
+        .feature-chip {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 16px;
+            color: #172033;
+            font-weight: 900;
+            border-right: 1px solid #e3e9f5;
+        }
+
+        .feature-chip:last-child {
+            border-right: none;
+        }
+
+        .chip-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            flex: 0 0 auto;
+        }
+
+        .chip-blue { background: #e0edff; color: #2563eb; }
+        .chip-purple { background: #f1e8ff; color: #7c3aed; }
+        .chip-green { background: #dcfce7; color: #16a34a; }
+        .chip-orange { background: #fff1db; color: #ea580c; }
+
+        .hero-visual {
+            position: relative;
+            min-height: 560px;
+        }
+
+        .bot-stage {
+            position: absolute;
+            inset: 42px 4px 0 0;
+            border-radius: 46% 46% 18px 18px;
+            background: radial-gradient(circle at 48% 42%, #dbeafe, #c7dcff 54%, rgba(255, 255, 255, 0) 55%);
+        }
+
+        .robot {
+            position: absolute;
+            right: 112px;
+            top: 130px;
+            width: 250px;
+            height: 300px;
+        }
+
+        .robot-head {
+            position: absolute;
+            top: 0;
+            left: 36px;
+            width: 180px;
+            height: 138px;
+            border-radius: 56px;
+            background: linear-gradient(180deg, #ffffff, #dfeaff);
+            box-shadow: 0 22px 44px rgba(37, 99, 235, 0.22);
+        }
+
+        .robot-face {
+            position: absolute;
+            left: 24px;
+            top: 34px;
+            width: 132px;
+            height: 74px;
+            border-radius: 34px;
+            background: #101935;
+        }
+
+        .robot-face::before,
+        .robot-face::after {
+            content: '';
+            position: absolute;
+            top: 24px;
+            width: 26px;
+            height: 26px;
+            border: 6px solid #38bdf8;
+            border-bottom-color: transparent;
+            border-left-color: transparent;
+            border-radius: 50%;
+            transform: rotate(-45deg);
+        }
+
+        .robot-face::before { left: 24px; }
+        .robot-face::after { right: 24px; }
+
+        .ear {
+            position: absolute;
+            top: 48px;
+            width: 32px;
+            height: 62px;
+            border-radius: 999px;
+            background: #2563eb;
+            box-shadow: inset 0 0 0 6px #7dd3fc;
+        }
+
+        .ear.left { left: 13px; }
+        .ear.right { right: 13px; }
+
+        .robot-body {
+            position: absolute;
+            left: 62px;
+            top: 142px;
+            width: 126px;
+            height: 126px;
+            border-radius: 38px;
+            background: linear-gradient(180deg, #ffffff, #dfeaff);
+            box-shadow: 0 20px 38px rgba(15, 23, 42, 0.12);
+        }
+
+        .robot-body::before {
+            content: '';
+            position: absolute;
+            left: 43px;
+            top: 28px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #67e8f9;
+            box-shadow: 0 0 0 8px #dffbff;
+        }
+
+        .laptop {
+            position: absolute;
+            right: 94px;
+            bottom: 38px;
+            width: 300px;
+            height: 138px;
+            border-radius: 16px;
+            background: #aab8d6;
+            transform: skewX(-8deg);
+            box-shadow: 0 26px 42px rgba(15, 23, 42, 0.18);
+        }
+
+        .laptop::after {
+            content: '';
+            position: absolute;
+            left: 132px;
+            top: 54px;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #ffffff;
+        }
+
+        .floating-card {
+            position: absolute;
+            min-width: 160px;
+            padding: 18px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 0 18px 36px rgba(15, 23, 42, 0.12);
+            font-weight: 900;
+        }
+
+        .floating-card small {
+            display: block;
+            margin-top: 8px;
+            color: #94a3b8;
+            font-weight: 800;
+        }
+
+        .upload-card {
+            top: 58px;
+            left: 52px;
+            transform: rotate(-5deg);
+        }
+
+        .interview-card {
+            left: 44px;
+            top: 244px;
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            color: #ffffff;
+        }
+
+        .feedback-card {
+            right: 0;
+            top: 118px;
+        }
+
+        .report-card {
+            right: 0;
+            top: 306px;
+        }
+
+        .plant {
+            position: absolute;
+            left: 52px;
+            bottom: 68px;
+            width: 80px;
+            height: 118px;
+        }
+
+        .plant::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 18px;
+            width: 44px;
+            height: 48px;
+            border-radius: 0 0 14px 14px;
+            background: #ffffff;
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        .leaf {
+            position: absolute;
+            bottom: 44px;
+            width: 28px;
+            height: 58px;
+            border-radius: 80% 0 80% 0;
+            background: #22c55e;
+        }
+
+        .leaf.one { left: 12px; transform: rotate(-28deg); }
+        .leaf.two { left: 30px; height: 76px; transform: rotate(2deg); }
+        .leaf.three { right: 12px; transform: rotate(28deg); }
+
+        .stats-band {
+            width: min(100%, 940px);
+            margin: -18px auto 0;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 0;
+            background: rgba(255, 255, 255, 0.86);
+            border: 1px solid #e3e9f5;
+            border-radius: 18px;
+            box-shadow: 0 22px 48px rgba(15, 23, 42, 0.1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 26px 34px;
+            border-right: 1px solid #e3e9f5;
+        }
+
+        .stat:last-child {
+            border-right: none;
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 2rem;
+            color: #2563eb;
+        }
+
+        .stat:nth-child(2) strong { color: #22c55e; }
+        .stat:nth-child(3) strong { color: #8b5cf6; }
+        .stat:nth-child(4) strong { color: #f97316; }
+
+        .stat span {
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .section {
+            width: min(100%, 1180px);
+            margin: 0 auto;
+            padding: 76px 48px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 34px;
+        }
+
+        .section-header h2 {
+            margin: 0 0 12px;
+            font-size: 2.2rem;
+            letter-spacing: -0.02em;
+        }
+
+        .section-header p {
+            margin: 0 auto;
+            max-width: 620px;
+            color: #64748b;
+            font-size: 1.05rem;
+            line-height: 1.65;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .info-card {
+            min-height: 230px;
+            padding: 28px;
+            border-radius: 16px;
+            background: #ffffff;
+            border: 1px solid #e3e9f5;
+            box-shadow: 0 18px 38px rgba(15, 23, 42, 0.06);
+        }
+
+        .info-card h3 {
+            margin: 18px 0 10px;
+            font-size: 1.2rem;
+        }
+
+        .info-card p {
+            margin: 0;
+            color: #64748b;
+            line-height: 1.65;
+        }
+
+        .step-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 24px;
+        }
+
+        .process-step {
+            padding: 30px;
+            border-radius: 16px;
+            background: linear-gradient(180deg, #ffffff, #f8fbff);
+            border: 1px solid #e3e9f5;
+            text-align: center;
+        }
+
+        .process-step .number {
+            width: 44px;
+            height: 44px;
+            margin: 0 auto 16px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: #2563eb;
+            color: #ffffff;
+            font-weight: 900;
+        }
+
+        .cta-section {
+            padding-bottom: 90px;
+        }
+
+        .cta-card {
+            padding: 48px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #172033, #26335f);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 28px;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+        }
+
+        .cta-card h2 {
+            margin: 0 0 12px;
+            font-size: 2rem;
+        }
+
+        .cta-card p {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.74);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1120px) {
+            .navbar {
+                padding: 0 24px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 42px 24px;
+            }
+
+            .hero-visual {
+                min-height: 480px;
+            }
+
+            .stats-band,
+            .feature-strip,
+            .cards-grid,
+            .step-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 720px) {
+            .navbar {
+                height: auto;
+                padding: 18px;
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .nav-actions {
+                width: 100%;
+                display: grid;
+                grid-template-columns: 1fr;
+            }
+
+            .brand-title {
+                font-size: 1.4rem;
+            }
+
+            .hero {
+                min-height: auto;
+            }
+
+            .hero-visual {
+                display: none;
+            }
+
+            .feature-strip,
+            .stats-band,
+            .cards-grid,
+            .step-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-chip,
+            .stat {
+                border-right: none;
+                border-bottom: 1px solid #e3e9f5;
+            }
+
+            .feature-chip:last-child,
+            .stat:last-child {
+                border-bottom: none;
+            }
+
+            .section {
+                padding: 54px 22px;
+            }
+
+            .cta-card {
+                align-items: stretch;
+                flex-direction: column;
+                padding: 32px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+</head>
+<body>
+    <div class="site-shell">
+        <nav class="navbar">
+            <a class="brand" href="{% url 'index' %}">
+                <div class="brand-bot">AI</div>
+                <div class="brand-title">Resume <span>Analyzer AI</span></div>
+            </a>
+
+            <div class="nav-links">
+                <a class="active" href="{% url 'index' %}">Home</a>
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="{% url 'pricing' %}">Pricing</a>
+            </div>
+
+            <div class="nav-actions">
+                <a class="btn outline" href="{% url 'user_login' %}">Login</a>
+                <a class="btn primary" href="{% url 'user_login' %}">User Login</a>
+            </div>
+        </nav>
+
+        <section class="hero">
+            <div class="hero-copy">
+                <div class="eyebrow"> AI Powered  Smart  Personalized</div>
+                <h1>Resume <span>Analyzer AI</span></h1>
+                <p class="lead">Upload your resume, take an AI-driven mock interview, and review resume scoring, analytics, and admin-approved results to boost your confidence.</p>
+                <div class="accent-line"></div>
+
+                <div class="hero-actions">
+                    <a class="btn primary" href="{% url 'register' %}"> Register </a>
+                    <a class="btn" href="{% url 'user_login' %}"> User Login</a>
+                </div>
+
+                <div class="feature-strip">
+                    <div class="feature-chip"><span class="chip-icon chip-blue"></span>Resume Based Questions</div>
+                    <div class="feature-chip"><span class="chip-icon chip-purple"></span>AI Powered Interviews</div>
+                    <div class="feature-chip"><span class="chip-icon chip-green"></span>Performance Analysis</div>
+                    <div class="feature-chip"><span class="chip-icon chip-orange"></span>Secure &amp; Private</div>
+                </div>
+            </div>
+
+            <div class="hero-visual" aria-hidden="true">
+                <div class="bot-stage"></div>
+                <div class="floating-card upload-card">Upload Resume<small> PDF / DOCX</small></div>
+                <div class="floating-card interview-card">Resume Analyzer AI<small>Voice guided interview</small></div>
+                <div class="floating-card feedback-card">Instant Feedback<small> Smart review</small></div>
+                <div class="floating-card report-card">Detailed Report<small> Score insights</small></div>
+                <div class="robot">
+                    <div class="robot-head">
+                        <div class="ear left"></div>
+                        <div class="ear right"></div>
+                        <div class="robot-face"></div>
+                    </div>
+                    <div class="robot-body"></div>
+                </div>
+                <div class="laptop"></div>
+                <div class="plant">
+                    <span class="leaf one"></span>
+                    <span class="leaf two"></span>
+                    <span class="leaf three"></span>
+                </div>
+            </div>
+        </section>
+
+        <div class="stats-band">
+            <div class="stat"><span class="chip-icon chip-blue"></span><div><strong>10K+</strong><span>Users</span></div></div>
+            <div class="stat"><span class="chip-icon chip-green"></span><div><strong>25K+</strong><span>Resumes Analyzed</span></div></div>
+            <div class="stat"><span class="chip-icon chip-purple"></span><div><strong>50K+</strong><span>Interviews Taken</span></div></div>
+            <div class="stat"><span class="chip-icon chip-orange"></span><div><strong>4.8/5</strong><span>User Rating</span></div></div>
+        </div>
+    </div>
+
+    <section class="section" id="features">
+        <div class="section-header">
+            <h2>Everything You Need To Prepare</h2>
+            <p>Resume Analyzer AI brings resume parsing, interview practice, scoring, and progress tracking into one focused workflow.</p>
+        </div>
+        <div class="cards-grid">
+            <article class="info-card">
+                <span class="chip-icon chip-blue"></span>
+                <h3>Resume-Aware Questions</h3>
+                <p>The interview is generated from the uploaded resume, so practice feels relevant to your skills and experience.</p>
+            </article>
+            <article class="info-card">
+                <span class="chip-icon chip-purple"></span>
+                <h3>Guided AI Interview</h3>
+                <p>Use webcam and voice flow to answer questions in a more realistic interview-style environment.</p>
+            </article>
+            <article class="info-card">
+                <span class="chip-icon chip-green"></span>
+                <h3>Performance Tracking</h3>
+                <p>Review status, score, submitted interview video, and candidate progress from a clean dashboard.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="section" id="how-it-works">
+        <div class="section-header">
+            <h2>How It Works</h2>
+            <p>Three simple steps take a candidate from resume upload to interview completion and review.</p>
+        </div>
+        <div class="step-grid">
+            <article class="process-step">
+                <div class="number">1</div>
+                <h3>Upload Resume</h3>
+                <p>Submit a PDF or DOCX resume so the system can understand the candidate profile.</p>
+            </article>
+            <article class="process-step">
+                <div class="number">2</div>
+                <h3>Take Interview</h3>
+                <p>Answer AI-generated questions with webcam recording and a guided interview experience.</p>
+            </article>
+            <article class="process-step">
+                <div class="number">3</div>
+                <h3>Review Results</h3>
+                <p>Track your status, review score outcomes, and keep your interview preparation progress organized.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="section cta-section">
+        <div class="cta-card">
+            <div>
+                <h2>Ready To Build Interview Confidence?</h2>
+                <p>Create an account, upload your resume, and start practicing with an AI-driven interviewer.</p>
+            </div>
+            <a class="btn primary" href="{% url 'register' %}">Get Started </a>
+        </div>
+    </section>
+        <footer class="section" style="padding-top: 34px; padding-bottom: 38px;">
+        <div style="display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; border-top: 1px solid #dfe8f7; padding-top: 24px; color: #64748b; font-weight: 700;">
+            <span>Resume Analyzer AI</span>
+            <span style="display: flex; gap: 16px; flex-wrap: wrap;">
+                <a href="{% url 'privacy_policy' %}" style="color:#2563eb; text-decoration:none; font-weight:900;">Privacy Policy</a>
+                <a href="{% url 'terms_and_conditions' %}" style="color:#2563eb; text-decoration:none; font-weight:900;">Terms &amp; Conditions</a>
+                <a href="{% url 'refund_policy' %}" style="color:#2563eb; text-decoration:none; font-weight:900;">Refund Policy</a>
+                <a href="{% url 'contact_us' %}" style="color:#2563eb; text-decoration:none; font-weight:900;">Contact Us</a>
+            </span>
+        </div>
+    </footer>
+    <script src="{% static 'js/theme.js' %}"></script>
+</body>
+</html>
+
+
+

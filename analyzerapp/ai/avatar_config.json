@@ -1,0 +1,11 @@
+{
+  "avatar_name": "InterviewerBot",
+  "greeting": "Welcome! I will be asking you some questions based on your resume.",
+  "voice": "en-US-Wavenet-F",
+  "animation_style": "professional",
+  "auto_start": true,
+  "question_delay": 4,
+  "background": "office",
+  "ai_mode": "scripted",  // or "dynamic" if integrating with LLM in future
+  "max_duration_sec": 60
+}

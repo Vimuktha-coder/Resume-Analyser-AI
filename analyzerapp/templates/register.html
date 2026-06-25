@@ -1,0 +1,459 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register - Resume Analyzer AI</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #eef2ff 0%, #dbeafe 45%, #f8fafc 100%);
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px 18px 22px;
+            color: #0f172a;
+        }
+
+        .register-card {
+            width: min(100%, 980px);
+            max-width: 980px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+            align-items: stretch;
+            background: transparent;
+            border-radius: 0;
+            overflow: hidden;
+            box-shadow: none;
+        }
+
+        .hero-side {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, #2563eb 0%, #1f4eda 100%);
+            color: white;
+            padding: 30px 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 14px;
+            text-align: left;
+            border-radius: 0;
+            box-shadow: none;
+            min-height: auto;
+        }
+
+        .hero-side::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.18), transparent 28%),
+                        radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.10), transparent 32%);
+            pointer-events: none;
+        }
+
+        .hero-side > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            opacity: 0.88;
+        }
+
+        .hero-label span {
+            width: 54px;
+            height: 34px;
+            display: inline-grid;
+            place-items: center;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .hero-title {
+            margin: 0 0 14px;
+            font-size: clamp(1.9rem, 2.5vw, 2.35rem);
+            line-height: 1.05;
+            max-width: 320px;
+            color: #ffffff;
+        }
+
+        .hero-text {
+            margin: 0;
+            font-size: 0.78rem;
+            font-weight: 800;
+            line-height: 1.7;
+            max-width: 360px;
+            color: rgba(255, 255, 255, 0.92);
+        }
+
+        .form-side {
+            background: transparent;
+            padding: 28px 26px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 0;
+            border-radius: 24px;
+            box-shadow: none;
+            align-items: stretch;
+        }
+
+        .form-title {
+            margin: 0 0 10px;
+            font-size: 1.9rem;
+            color: #111827;
+        }
+
+        .form-copy {
+            margin: 0 0 18px;
+            color: #475569;
+            line-height: 1.65;
+            font-size: 0.95rem;
+            max-width: 420px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            box-sizing: border-box;
+            border-radius: 14px;
+            border: 1px solid #d1d5db;
+            padding: 14px 16px;
+            font-size: 0.95rem;
+            background: #ffffff;
+            color: #111827;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-group textarea {
+            min-height: 74px;
+            resize: vertical;
+        }
+
+        .field-error {
+            margin-top: 6px;
+            color: #b91c1c;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+        }
+
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 12px;
+            color: #475569;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .checkbox-row input {
+            width: 18px;
+            height: 18px;
+            accent-color: #2563eb;
+        }
+
+        .checkbox-row a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .register-button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 14px;
+            background: #2563eb;
+            color: white;
+            font-size: 0.98rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.18);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .register-button:hover {
+            background: #1f4eda;
+            transform: translateY(-1px);
+        }
+
+        .footer-note {
+            margin: 18px 0 0;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .footer-note a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .error {
+            margin-bottom: 18px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        @media (max-width: 900px) {
+            body {
+                padding: 22px 16px 24px;
+            }
+
+            .register-card {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .hero-side,
+            .form-side {
+                padding: 28px 24px;
+            }
+
+            .hero-title {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero-side {
+                display: none;
+            }
+
+            .form-side {
+                padding: 24px 18px;
+            }
+        }
+
+
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear {
+            display: none;
+        }
+
+        input[type="password"]::-webkit-credentials-auto-fill-button,
+        input[type="password"]::-webkit-caps-lock-indicator {
+            visibility: hidden;
+            display: none !important;
+            pointer-events: none;
+        }
+        .password-wrap {
+            position: relative;
+            width: 100%;
+        }
+
+        .password-wrap input {
+            width: 100%;
+            box-sizing: border-box;
+            padding-right: 66px;
+        }
+
+        .password-eye {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 54px;
+            height: 34px;
+            border: 0;
+            border-radius: 50%;
+            background: transparent;
+            color: #64748b;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        .password-strength {
+            margin-top: 7px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: #dc2626;
+        }
+
+        .password-strength.medium {
+            color: #d97706;
+        }
+
+        .password-strength.strong {
+            color: #16a34a;
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'css/site.css' %}">
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+</head>
+<body>
+    <div class="register-card">
+        <div class="hero-side">
+            <div class="hero-content">
+                <div class="hero-label">
+                    <span>AI</span>
+                    Resume Analyzer AI
+                </div>
+                <h1 class="hero-title">Build stronger resumes and prepare for interviews</h1>
+                <p class="hero-text">Sign up now to save your resume progress, view AI-driven score insights, and access interview preparation tools tailored to your experience.</p>
+            </div>
+        </div>
+
+        <div class="form-side">
+            <h2 class="form-title">Register</h2>
+            <p class="form-copy">Create your profile to upload resumes, track interview progress, and view your results in one place.</p>
+
+            {% if error %}
+                <div class="error">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="id_name">Name</label>
+                        {{ form.name }}
+                        {% for error in form.name.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="id_email">Email</label>
+                        {{ form.email }}
+                        {% for error in form.email.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_phone">Phone</label>
+                        {{ form.phone }}
+                        {% for error in form.phone.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_state">State</label>
+                        {{ form.state }}
+                        {% for error in form.state.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="id_address">Address</label>
+                        {{ form.address }}
+                        {% for error in form.address.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="id_password">Password</label>
+                        <div class="password-wrap">
+                            {{ form.password }}
+                            <button class="password-eye" type="button" data-target="id_password" aria-label="Show password">Show</button>
+                        </div>
+                        <div id="passwordStrength" class="password-strength">Use 8+ chars with uppercase, lowercase, number, and special character.</div>
+                        {% for error in form.password.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="id_confirm_password">Confirm Password</label>
+                        <div class="password-wrap">
+                            {{ form.confirm_password }}
+                            <button class="password-eye" type="button" data-target="id_confirm_password" aria-label="Show password">Show</button>
+                        </div>
+                        {% for error in form.confirm_password.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+
+                <div class="checkbox-row">
+                    <input type="checkbox" id="terms" name="terms" />
+                    <label for="terms">I accept the <a href="#">Terms of Use</a> &amp; <a href="#">Privacy Policy</a></label>
+                </div>
+
+                <button class="register-button" type="submit">Register Now</button>
+            </form>
+
+            <p class="footer-note">Already have an account? <a href="{% url 'user_login' %}">Login here</a></p>
+        </div>
+    </div>
+    <script src="{% static 'js/theme.js' %}"></script>
+    <script>
+        document.querySelectorAll('.password-eye').forEach((button) => {
+            button.addEventListener('click', () => {
+                const input = document.getElementById(button.dataset.target);
+                if (!input) return;
+                input.type = input.type === 'password' ? 'text' : 'password';
+                button.textContent = input.type === 'password' ? 'Show' : 'Hide';
+            });
+        });
+
+        const passwordInput = document.getElementById('id_password');
+        const strength = document.getElementById('passwordStrength');
+        if (passwordInput && strength) {
+            passwordInput.addEventListener('input', () => {
+                const value = passwordInput.value;
+                let score = 0;
+                if (value.length >= 8) score += 1;
+                if (/[A-Z]/.test(value)) score += 1;
+                if (/[a-z]/.test(value)) score += 1;
+                if (/\d/.test(value)) score += 1;
+                if (/[^A-Za-z0-9]/.test(value)) score += 1;
+
+                strength.className = 'password-strength';
+                if (!value) {
+                    strength.textContent = 'Use 8+ chars with uppercase, lowercase, number, and special character.';
+                } else if (score < 4) {
+                    strength.textContent = 'Weak password';
+                } else if (score < 5) {
+                    strength.textContent = 'Medium password';
+                    strength.classList.add('medium');
+                } else {
+                    strength.textContent = 'Strong password';
+                    strength.classList.add('strong');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+

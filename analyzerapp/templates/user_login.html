@@ -1,0 +1,435 @@
+﻿{% load static %}
+{% load socialaccount %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - Resume Analyzer AI</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #eef2ff 0%, #dbeafe 45%, #f8fafc 100%);
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px 18px 22px;
+            color: #0f172a;
+        }
+
+        .page-wrapper {
+            width: min(100%, 860px);
+            max-width: 860px;
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: 22px;
+            align-items: stretch;
+        }
+
+        .brand-panel {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, #2563eb 0%, #1f4eda 100%);
+            color: white;
+            padding: 30px 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 14px;
+            text-align: left;
+            border-radius: 0;
+            box-shadow: none;
+            min-height: auto;
+        }
+
+        .brand-panel::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.18), transparent 28%),
+                        radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.10), transparent 32%);
+            pointer-events: none;
+        }
+
+        .brand-panel > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            opacity: 0.88;
+        }
+
+        .hero-label span {
+            width: 54px;
+            height: 34px;
+            display: inline-grid;
+            place-items: center;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .brand-panel h1 {
+            margin: 0;
+            font-size: clamp(2.2rem, 3vw, 2.8rem);
+            line-height: 1.05;
+            max-width: 320px;
+        }
+
+        .brand-panel p {
+            max-width: 360px;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.92);
+            font-size: 0.78rem;
+            font-weight: 800;
+            line-height: 1.7;
+        }
+
+        .login-panel {
+            padding: 28px 26px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            background: transparent;
+            align-items: stretch;
+            border-radius: 24px;
+            box-shadow: none;
+        }
+
+        .login-panel form {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .login-panel h2 {
+            margin: 0 0 10px;
+            font-size: 1.9rem;
+            color: #111827;
+        }
+
+        .login-panel p {
+            margin: 0 0 18px;
+            color: #475569;
+            line-height: 1.65;
+            font-size: 0.95rem;
+            max-width: 420px;
+        }
+
+        .social-buttons {
+            display: grid;
+            gap: 12px;
+        }
+
+        .social-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 1px solid #d1d5db;
+            color: #1f2937;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.94rem;
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .social-button:hover {
+            transform: translateY(-1px);
+            background: #eef2ff;
+            border-color: #cbd5e1;
+        }
+
+        .split-label {
+            margin: 0 0 24px;
+            text-align: center;
+            font-size: 0.82rem;
+            color: #9ca3af;
+            position: relative;
+        }
+
+        .split-label::before,
+        .split-label::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 35%;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
+        .split-label::before {
+            left: 0;
+            transform: translateY(-50%);
+        }
+
+        .split-label::after {
+            right: 0;
+            transform: translateY(-50%);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .form-group input {
+            width: 100%;
+            border-radius: 14px;
+            border: 1px solid #d1d5db;
+            padding: 14px 16px;
+            font-size: 0.95rem;
+            color: #111827;
+            background: #f8fafc;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+        }
+
+        .helper-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+            color: #64748b;
+        }
+
+        .helper-row label {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .helper-row input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #2563eb;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 14px;
+            background: #2563eb;
+            color: white;
+            font-size: 0.98rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.18);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .login-button:hover {
+            transform: translateY(-1px);
+        }
+
+        .login-footer {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-top: 18px;
+            color: #6b7280;
+            font-size: 0.88rem;
+        }
+
+        .login-footer a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .error {
+            margin-top: 18px;
+            padding: 14px 18px;
+            border-radius: 16px;
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        @media (max-width: 1024px) {
+            body {
+                padding: 22px 16px 24px;
+            }
+
+            .page-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .brand-panel,
+            .login-panel {
+                padding: 28px 24px;
+            }
+
+            .brand-panel h1 {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 680px) {
+            body {
+                padding: 16px;
+            }
+
+            .brand-panel {
+                display: none;
+            }
+
+            .login-panel {
+                border-radius: 20px;
+                box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+            }
+
+            .login-footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear {
+            display: none;
+        }
+
+        input[type="password"]::-webkit-credentials-auto-fill-button,
+        input[type="password"]::-webkit-caps-lock-indicator {
+            visibility: hidden;
+            display: none !important;
+            pointer-events: none;
+        }
+        .password-wrap {
+            position: relative;
+            width: 100%;
+        }
+
+        .password-wrap input {
+            width: 100%;
+            box-sizing: border-box;
+            padding-right: 66px;
+        }
+
+        .password-eye {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 54px;
+            height: 34px;
+            border: 0;
+            border-radius: 50%;
+            background: transparent;
+            color: #64748b;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+</head>
+<body>
+    <div class="page-wrapper">
+        <div class="brand-panel">
+            <div class="hero-label">
+                    <span>AI</span>
+                    Resume Analyzer AI
+                </div>
+            <h1>Welcome</h1>
+            <p>Securely access resume analytics, practice interviews faster, and review your results in one powerful dashboard.</p>
+        </div>
+
+        <div class="login-panel">
+            <h2>Log in to your Account</h2>
+            <p>Welcome back! Select a method to log in.</p>
+            <div class="social-buttons">
+                <a class="social-button" href="{% provider_login_url 'google' process='login' %}">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.91 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/></svg>
+                    Google
+                </a>
+                <a class="social-button" href="{% url 'facebook_login_direct' %}">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    Facebook
+                </a>
+            </div>
+            <p class="split-label">or continue with email</p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="id_email">Email</label>
+                    {{ form.email }}
+                </div>
+                <div class="form-group">
+                    <label for="id_password">Password</label>
+                    <div class="password-wrap">
+                        {{ form.password }}
+                        <button class="password-eye" type="button" data-target="id_password" aria-label="Show password">Show</button>
+                    </div>
+                </div>
+                <div class="helper-row">
+                    <label><input type="checkbox" name="remember" /> Remember me</label>
+                    <a href="#">Forgot Password?</a>
+                </div>
+                <button class="login-button" type="submit">Log in</button>
+            </form>
+            <div class="login-footer">
+                <span>Don't have an account? <a href="{% url 'register' %}">Create an account</a></span>
+            </div>
+            {% if error %}
+                <div class="error">{{ error }}</div>
+            {% endif %}
+        </div>
+    </div>
+    <script src="{% static 'js/theme.js' %}"></script>
+    <script>
+        document.querySelectorAll('.password-eye').forEach((button) => {
+            button.addEventListener('click', () => {
+                const input = document.getElementById(button.dataset.target);
+                if (!input) return;
+                input.type = input.type === 'password' ? 'text' : 'password';
+                button.textContent = input.type === 'password' ? 'Show' : 'Hide';
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+

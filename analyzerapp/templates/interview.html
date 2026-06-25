@@ -1,0 +1,1264 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interview Session - Resume Analyzer AI</title>
+    <link rel="icon" href="{% static 'avatar/smv.png' %}" type="image/png">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #f6f8ff;
+            color: #172033;
+        }
+
+        .app-shell {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 236px 1fr;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            padding: 26px 18px;
+            background: #ffffff;
+            border-right: 1px solid #e3e9f5;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 8px;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            color: #2563eb;
+            background: #eef4ff;
+            font-weight: 900;
+            box-shadow: inset 0 0 0 1px #dbe7ff;
+        }
+
+        .brand strong {
+            display: block;
+            font-size: 1.02rem;
+        }
+
+        .brand span {
+            color: #64748b;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .nav {
+            display: grid;
+            gap: 8px;
+        }
+
+        .nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 44px;
+            padding: 0 14px;
+            border-radius: 8px;
+            color: #637089;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .nav a.active,
+        .nav a:hover {
+            background: #eef4ff;
+            color: #2563eb;
+        }
+
+        .nav-icon {
+            width: 18px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .upgrade {
+            margin-top: auto;
+            padding: 18px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #2563eb, #8b5cf6);
+            color: #ffffff;
+        }
+
+        .upgrade strong {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .upgrade p {
+            margin: 0 0 16px;
+            color: rgba(255, 255, 255, 0.82);
+            font-size: 0.78rem;
+            line-height: 1.5;
+        }
+
+        .upgrade a {
+            display: flex;
+            justify-content: center;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 0.82rem;
+        }
+
+        .main {
+            padding: 18px 26px 24px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .session-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .session-title h1 {
+            margin: 0;
+            font-size: 1.15rem;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            border-radius: 999px;
+            background: #efeaff;
+            color: #7c3aed;
+            font-size: 0.72rem;
+            font-weight: 900;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #637089;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #172033;
+            text-decoration: none;
+            font-weight: 800;
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: #6d28d9;
+            color: #ffffff;
+            font-size: 0.82rem;
+            font-weight: 900;
+        }
+
+        .session-info {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .info-card,
+        .panel,
+        .question-card,
+        .side-card {
+            background: #ffffff;
+            border: 1px solid #e3e9f5;
+            border-radius: 8px;
+            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
+        }
+
+        .info-card {
+            min-height: 64px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .info-icon,
+        .panel-icon {
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            border-radius: 8px;
+            font-size: 1.15rem;
+            flex: 0 0 auto;
+        }
+
+        .green {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .blue {
+            background: #e0edff;
+            color: #2563eb;
+        }
+
+        .purple {
+            background: #f1e8ff;
+            color: #7c3aed;
+        }
+
+        .orange {
+            background: #fff1db;
+            color: #ea580c;
+        }
+
+        .label {
+            color: #64748b;
+            font-size: 0.76rem;
+            font-weight: 800;
+        }
+
+        .value {
+            margin-top: 4px;
+            font-weight: 900;
+            font-size: 0.92rem;
+            max-width: 190px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .mini-pill {
+            display: inline-flex;
+            margin-top: 4px;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: #dcfce7;
+            color: #16a34a;
+            font-size: 0.68rem;
+            font-weight: 900;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: minmax(280px, 0.9fr) minmax(420px, 1.35fr) 280px;
+            gap: 14px;
+            align-items: start;
+        }
+
+        .left-stack {
+            display: grid;
+            gap: 12px;
+            align-content: start;
+        }
+
+        .panel {
+            min-height: 168px;
+            padding: 14px 16px;
+        }
+
+        .panel-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+
+        .panel-head h2 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .panel-head span {
+            display: block;
+            color: #64748b;
+            font-size: 0.78rem;
+            margin-top: 4px;
+        }
+
+        .ai-orb {
+            width: 76px;
+            height: 76px;
+            margin: 4px auto 6px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: radial-gradient(circle, #ffffff 0 34%, #e8eeff 35% 100%);
+            box-shadow: inset 0 0 0 1px #dce6ff, 0 18px 34px rgba(37, 99, 235, 0.12);
+        }
+
+        .ai-face {
+            width: 48px;
+            height: 34px;
+            border-radius: 18px;
+            background: #1d4ed8;
+            position: relative;
+            box-shadow: 0 14px 24px rgba(37, 99, 235, 0.24);
+        }
+
+        .ai-face::before,
+        .ai-face::after {
+            content: '';
+            position: absolute;
+            top: 14px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #67e8f9;
+        }
+
+        .ai-face::before {
+            left: 13px;
+        }
+
+        .ai-face::after {
+            right: 13px;
+        }
+
+        .wave {
+            height: 20px;
+            margin: 0 auto 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .wave span {
+            width: 3px;
+            border-radius: 999px;
+            background: #8b5cf6;
+        }
+
+        .wave span:nth-child(1) { height: 10px; }
+        .wave span:nth-child(2) { height: 14px; }
+        .wave span:nth-child(3) { height: 20px; }
+        .wave span:nth-child(4) { height: 12px; }
+        .wave span:nth-child(5) { height: 18px; }
+        .wave span:nth-child(6) { height: 10px; }
+        .wave span:nth-child(7) { height: 20px; }
+        .wave span:nth-child(8) { height: 14px; }
+
+        .listening {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            min-height: 34px;
+            padding: 0 12px;
+            border-radius: 8px;
+            color: #2563eb;
+            background: #f8fbff;
+            border: 1px solid #dbe7ff;
+            font-weight: 900;
+            font-size: 0.82rem;
+        }
+
+        .video-panel {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #111827;
+            height: min(430px, calc(100vh - 300px));
+            min-height: 300px;
+            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            min-height: 300px;
+            object-fit: cover;
+            display: block;
+            background: linear-gradient(135deg, #dbeafe, #ffffff);
+        }
+
+        .video-label {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            font-weight: 900;
+            font-size: 0.82rem;
+        }
+
+        .video-label span {
+            display: block;
+            color: #16a34a;
+            font-size: 0.72rem;
+            margin-top: 3px;
+        }
+
+        .video-controls {
+            position: absolute;
+            left: 50%;
+            bottom: 22px;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 14px;
+        }
+
+        .control-btn {
+            width: 48px;
+            height: 48px;
+            display: grid;
+            place-items: center;
+            border: none;
+            border-radius: 50%;
+            color: #ffffff;
+            background: #111827;
+            cursor: pointer;
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.22);
+        }
+
+        .control-btn.red {
+            background: #ef4444;
+        }
+
+        .side-stack {
+            display: grid;
+            gap: 14px;
+        }
+
+        .tips-card {
+            display: none;
+        }
+
+        .side-card {
+            padding: 16px;
+        }
+
+        .side-card h3 {
+            margin: 0 0 16px;
+            font-size: 0.98rem;
+        }
+
+        .ring {
+            width: 86px;
+            height: 86px;
+            margin: 0 auto 10px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: conic-gradient(#2563eb var(--progress, 0%), #e8eef8 0);
+            position: relative;
+            font-size: 1.12rem;
+            font-weight: 900;
+            color: #172033;
+        }
+
+        .ring::before {
+            content: '';
+            position: absolute;
+            inset: 10px;
+            border-radius: 50%;
+            background: #ffffff;
+        }
+
+        .ring span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.82rem;
+            font-weight: 800;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e3e9f5;
+            margin-bottom: 10px;
+        }
+
+        .status-list,
+        .tips-list {
+            display: grid;
+            gap: 8px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+
+        .status-list li,
+        .tips-list li {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .status-list li::before,
+        .tips-list li::before {
+            content: '';
+            width: 17px;
+            height: 17px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            color: #ffffff;
+            background: #22c55e;
+            font-size: 0.62rem;
+            flex: 0 0 auto;
+        }
+
+        .tips-list li::before {
+            content: '+';
+            background: #e0edff;
+            color: #2563eb;
+        }
+
+        .question-card {
+            margin-top: 0;
+            padding: 16px;
+        }
+
+        .question-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 8px;
+        }
+
+        .question-meta strong {
+            font-size: 0.82rem;
+        }
+
+        .question-count {
+            padding: 4px 9px;
+            border-radius: 999px;
+            background: #efeaff;
+            color: #7c3aed;
+            font-size: 0.72rem;
+            font-weight: 900;
+        }
+
+        #questions {
+            margin: 0 0 6px;
+            color: #172033;
+            font-size: 1.08rem;
+            line-height: 1.35;
+        }
+
+        #status {
+            color: #64748b;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+        }
+
+        .answer-box {
+            border-top: 1px solid #e3e9f5;
+            padding-top: 12px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 18px;
+            margin-bottom: 8px;
+            color: #64748b;
+            font-size: 0.82rem;
+            font-weight: 900;
+        }
+
+        .tabs span:first-child {
+            color: #2563eb;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 46px 46px;
+            gap: 10px;
+        }
+
+        .input-row input {
+            width: 100%;
+            min-height: 40px;
+            border-radius: 8px;
+            border: 1px solid #dbe4f2;
+            padding: 0 14px;
+            color: #172033;
+            font: inherit;
+        }
+
+        .input-row button,
+        .start-row button {
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: #ffffff;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.18);
+        }
+
+        .start-row {
+            margin-top: 10px;
+            display: grid;
+            place-items: center;
+            gap: 6px;
+        }
+
+        .start-row button {
+            min-width: 280px;
+            min-height: 42px;
+            background: linear-gradient(135deg, #2563eb, #8b5cf6);
+        }
+
+        .start-row button:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .start-row span {
+            color: #2563eb;
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        @media (max-width: 1180px) {
+            .app-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+                height: auto;
+            }
+
+            .nav {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+
+            .upgrade {
+                display: none;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr 1.3fr;
+            }
+
+            .side-stack {
+                grid-column: 1 / -1;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 760px) {
+            .main {
+                padding: 16px;
+            }
+
+            .topbar,
+            .session-info,
+            .content-grid,
+            .side-stack,
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                display: grid;
+                gap: 16px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">AI</div>
+                <div>
+                    <strong>AI Interviewer</strong>
+                    <span>Your AI Interview Assistant</span>
+                </div>
+            </div>
+
+            <nav class="nav">
+                <a href="{% url 'user_dashboard' %}"><span class="nav-icon"></span>Dashboard</a>
+                <a href="{% url 'upload_resume' %}"><span class="nav-icon"></span>Resume</a>
+                <a href="{% url 'user_analytics' %}"><span class="nav-icon"></span>Analytics</a>
+                <a href="#"><span class="nav-icon"></span>Settings</a>
+            </nav>
+
+            <div class="upgrade">
+                <strong>Upgrade to Pro</strong>
+                <p>Unlock unlimited interviews, detailed analytics and more.</p>
+                <a href="#">Upgrade Now </a>
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <div class="session-title">
+                    <h1>Interview Session</h1>
+                    <span class="status-pill"> Ready</span>
+                </div>
+                <div class="top-actions">
+                    <a class="profile" href="{% url 'user_dashboard' %}">
+                        <span class="avatar">{% if candidate %}{{ candidate.name|slice:":2"|upper }}{% else %}AI{% endif %}</span>
+                        <span>{% if candidate %}{{ candidate.name }}{% else %}Candidate{% endif %}</span>
+                        <span></span>
+                    </a>
+                    <button class="theme-toggle" type="button" aria-label="Toggle theme"></button>
+                </div>
+            </header>
+
+            <section class="session-info">
+                <div class="info-card">
+                    <div class="info-icon green"></div>
+                    <div>
+                        <div class="label">Resume</div>
+                        <div class="value">{% if candidate and candidate.resumes.exists %}{{ candidate.resumes.last.resume_file.name|cut:"resumes/uploaded/" }}{% else %}Resume Required{% endif %}</div>
+                        <span class="mini-pill">{% if candidate and candidate.resumes.exists %}Uploaded{% else %}Missing{% endif %}</span>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon purple"></div>
+                    <div>
+                        <div class="label">Role</div>
+                        <div class="value">{% if candidate %}{{ candidate.interview_role }}{% else %}Frontend Developer{% endif %}</div>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon blue"></div>
+                    <div>
+                        <div class="label">Duration</div>
+                        <div class="value">{% if candidate %}{{ candidate.interview_duration }}{% else %}20{% endif %} Minutes</div>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon orange"></div>
+                    <div>
+                        <div class="label">Questions</div>
+                        <div class="value"><span id="totalQuestions">{% if candidate %}{{ candidate.interview_question_count }}{% else %}15{% endif %}</span> Questions</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-grid">
+                <div class="left-stack">
+                    <article class="panel">
+                        <div class="panel-head">
+                            <div class="panel-icon green"></div>
+                            <div>
+                                <h2>AI Interviewer</h2>
+                                <span> Your AI Assistant</span>
+                            </div>
+                        </div>
+                        <div class="ai-orb">
+                            <div class="ai-face"></div>
+                        </div>
+                        <div class="wave" aria-hidden="true">
+                            <span></span><span></span><span></span><span></span>
+                            <span></span><span></span><span></span><span></span>
+                        </div>
+                        <div class="listening">
+                            <span id="assistantState">Listening...</span>
+                            <span></span>
+                        </div>
+                    </article>
+
+                    <section class="question-card">
+                        <div class="question-meta">
+                            <strong>Current Question</strong>
+                            <span class="question-count"><span id="currentQuestion">01</span>/<span id="questionTotal">{% if candidate %}{{ candidate.interview_question_count }}{% else %}15{% endif %}</span></span>
+                        </div>
+                        <h2 id="questions">Click Start Interview to begin.</h2>
+                        <div id="status">Your first question will appear here after the interview starts.</div>
+                        <div class="answer-box">
+                            <div class="tabs">
+                                <span>Type Answer</span>
+                                <span>Voice Answer</span>
+                            </div>
+                            <div class="input-row">
+                                <input id="typedAnswer" type="text" placeholder="Type your answer here...">
+                                <button type="button"></button>
+                                <button id="sendAnswer" type="button"></button>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <article class="video-panel">
+                    <video id="preview" autoplay muted playsinline></video>
+                    <div class="video-label">
+                        <span class="avatar">{% if candidate %}{{ candidate.name|slice:":1"|upper }}{% else %}C{% endif %}</span>
+                        <div>
+                            Your Webcam
+                            <span> Live</span>
+                        </div>
+                    </div>
+                    <div class="video-controls">
+                        <button class="control-btn" type="button"></button>
+                        <button class="control-btn red" type="button"></button>
+                        <button class="control-btn" type="button"></button>
+                    </div>
+                </article>
+
+                <aside class="side-stack">
+                    <div class="side-card">
+                        <h3>Interview Progress</h3>
+                        <div class="ring" id="progressRing" style="--progress: 0%;"><span id="progressPercent">0%</span></div>
+                        <div class="progress-text"><span id="progressCount">0</span> of <span id="progressTotal">15</span> Questions</div>
+                        <h3>Interview Status</h3>
+                        <ul class="status-list">
+                            <li><span>Resume Uploaded</span><strong>{% if candidate and candidate.resumes.exists %}Ready{% else %}Needed{% endif %}</strong></li>
+                            <li><span>System Check</span><strong>Passed</strong></li>
+                            <li><span>Camera</span><strong id="cameraState">Ready</strong></li>
+                            <li><span>Microphone</span><strong id="micState">Ready</strong></li>
+                            <li><span>Environment</span><strong>Good</strong></li>
+                        </ul>
+                    </div>
+
+                    <div class="side-card tips-card">
+                        <h3>Interview Tips</h3>
+                        <ul class="tips-list">
+                            <li>Speak clearly and confidently</li>
+                            <li>Take your time to think</li>
+                            <li>Give real examples</li>
+                            <li>Be honest and authentic</li>
+                        </ul>
+                    </div>
+                </aside>
+            </section>
+
+            <div class="start-row">
+                <button id="startBtn" type="button"> Start Interview</button>
+                <span>Click to begin the interview</span>
+            </div>
+        </main>
+    </div>
+
+    {{ questions|json_script:"questions-data" }}
+    <script>
+        const rawQuestions = JSON.parse(document.getElementById('questions-data').textContent) || [];
+        const questions = rawQuestions.filter(q => q && q.trim());
+        const questionDiv = document.getElementById('questions');
+        const statusDiv = document.getElementById('status');
+        const video = document.getElementById('preview');
+        const startBtn = document.getElementById('startBtn');
+        const assistantState = document.getElementById('assistantState');
+        const currentQuestion = document.getElementById('currentQuestion');
+        const questionTotal = document.getElementById('questionTotal');
+        const totalQuestions = document.getElementById('totalQuestions');
+        const progressTotal = document.getElementById('progressTotal');
+        const progressCount = document.getElementById('progressCount');
+        const progressPercent = document.getElementById('progressPercent');
+        const progressRing = document.getElementById('progressRing');
+        const cameraState = document.getElementById('cameraState');
+        const micState = document.getElementById('micState');
+        const typedAnswer = document.getElementById('typedAnswer');
+        const sendAnswer = document.getElementById('sendAnswer');
+
+        let mediaRecorder, recordedChunks = [];
+        let audioRecorder, audioChunks = [];
+        let webcamStream = null;
+        let audioContext = null;
+        let analyser = null;
+        let audioSource = null;
+        let audioMonitorInterval = null;
+        let transcriptEntries = [];
+        let answerWindows = [];
+        let recordingStartedAt = null;
+        let activeAnswerSubmit = null;
+        let globalSpeechCapture = null;
+        let currentSpeechBucket = null;
+        const AUDIO_THRESHOLD = 0.035;
+        const ANSWER_SILENCE_LIMIT = 8000;
+        const NO_SPEECH_LIMIT = 20000;
+        const MAX_ANSWER_TIME = 90000;
+
+        const questionCount = Math.max(questions.length, 1);
+        totalQuestions.textContent = questionCount;
+        questionTotal.textContent = questionCount;
+        progressTotal.textContent = questionCount;
+
+        function setStatus(text) {
+            statusDiv.textContent = text;
+        }
+
+        function setAssistant(text) {
+            assistantState.textContent = text;
+        }
+
+        function updateProgress(index) {
+            const completed = Math.min(index, questionCount);
+            const percent = Math.round((completed / questionCount) * 100);
+            progressCount.textContent = completed;
+            progressPercent.textContent = percent + '%';
+            progressRing.style.setProperty('--progress', percent + '%');
+            currentQuestion.textContent = String(Math.min(index + 1, questionCount)).padStart(2, '0');
+        }
+
+        function getAudioLevel() {
+            if (!analyser) return 0;
+            const bufferLength = analyser.fftSize;
+            const dataArray = new Uint8Array(bufferLength);
+            analyser.getByteTimeDomainData(dataArray);
+            let sum = 0;
+            for (let i = 0; i < bufferLength; i++) {
+                const value = (dataArray[i] - 128) / 128;
+                sum += value * value;
+            }
+            return Math.sqrt(sum / bufferLength);
+        }
+
+        async function startWebcam() {
+            webcamStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            video.srcObject = webcamStream;
+            cameraState.textContent = 'Ready';
+            micState.textContent = 'Ready';
+
+            mediaRecorder = new MediaRecorder(webcamStream);
+            recordedChunks = [];
+
+            mediaRecorder.ondataavailable = e => {
+                if (e.data.size > 0) recordedChunks.push(e.data);
+            };
+
+            mediaRecorder.start(1000);
+
+            const audioOnlyStream = new MediaStream(webcamStream.getAudioTracks());
+            const audioOptions = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+                ? { mimeType: 'audio/webm;codecs=opus' }
+                : {};
+            audioRecorder = new MediaRecorder(audioOnlyStream, audioOptions);
+            audioChunks = [];
+            audioRecorder.ondataavailable = e => {
+                if (e.data.size > 0) audioChunks.push(e.data);
+            };
+            audioRecorder.start(1000);
+            recordingStartedAt = Date.now();
+
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            audioSource = audioContext.createMediaStreamSource(webcamStream);
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 2048;
+            audioSource.connect(analyser);
+            globalSpeechCapture = startSpeechCapture();
+        }
+
+        function speak(text, callback) {
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.onstart = () => setAssistant('Speaking...');
+            utter.onend = callback;
+            speechSynthesis.speak(utter);
+        }
+
+        function startSpeechCapture() {
+            const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!Recognition) return null;
+            const recognition = new Recognition();
+            recognition.lang = 'en-US';
+            recognition.interimResults = true;
+            recognition.continuous = true;
+            let finalText = '';
+            let interimText = '';
+            let active = true;
+            recognition.onresult = (event) => {
+                interimText = '';
+                if (currentSpeechBucket) {
+                    currentSpeechBucket.interimText = '';
+                }
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const part = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalText += part + ' ';
+                        if (currentSpeechBucket) {
+                            currentSpeechBucket.finalText += part + ' ';
+                        }
+                    } else {
+                        interimText += part + ' ';
+                        if (currentSpeechBucket) {
+                            currentSpeechBucket.interimText += part + ' ';
+                        }
+                    }
+                }
+            };
+            recognition.onerror = () => {
+                setStatus('Speech recognition paused. Keep speaking or type your answer, then click the arrow.');
+            };
+            recognition.onend = () => {
+                if (!active) return;
+                try {
+                    recognition.start();
+                } catch (error) {}
+            };
+            try {
+                recognition.start();
+            } catch (error) {
+                return null;
+            }
+            return {
+                getText: () => (finalText + interimText).trim(),
+                stop: () => {
+                    active = false;
+                    try { recognition.stop(); } catch (error) {}
+                    return (finalText + interimText).trim();
+                }
+            };
+        }
+
+        function listenForAnswer(questionText, questionIndex, onReady) {
+            let heardSpeaking = false;
+            let lastVoiceTime = Date.now();
+            const listenStartedAt = Date.now();
+            currentSpeechBucket = { finalText: '', interimText: '' };
+            let completed = false;
+
+            const cleanUp = (forceUseSpeech = false) => {
+                if (completed) return;
+                completed = true;
+                if (audioMonitorInterval) {
+                    clearInterval(audioMonitorInterval);
+                    audioMonitorInterval = null;
+                }
+                const spokenText = currentSpeechBucket
+                    ? (currentSpeechBucket.finalText + currentSpeechBucket.interimText).trim()
+                    : '';
+                const typedText = typedAnswer ? typedAnswer.value.trim() : '';
+                const answerText = typedText || ((heardSpeaking || forceUseSpeech) ? spokenText : '') || 'No answer detected';
+                transcriptEntries.push(`Q: ${questionText}\nA: ${answerText}`);
+                answerWindows.push({
+                    question: questionText,
+                    index: questionIndex,
+                    start: recordingStartedAt ? (listenStartedAt - recordingStartedAt) / 1000 : 0,
+                    end: recordingStartedAt ? (Date.now() - recordingStartedAt) / 1000 : 0,
+                    browserAnswer: answerText
+                });
+                if (typedAnswer) typedAnswer.value = '';
+                currentSpeechBucket = null;
+            };
+
+            activeAnswerSubmit = () => {
+                cleanUp(true);
+                onReady(true);
+            };
+
+            setAssistant('Listening...');
+            audioMonitorInterval = setInterval(() => {
+                const level = getAudioLevel();
+                const now = Date.now();
+                const capturedText = currentSpeechBucket
+                    ? (currentSpeechBucket.finalText + currentSpeechBucket.interimText).trim()
+                    : '';
+
+                if (capturedText.length > 4) {
+                    heardSpeaking = true;
+                    lastVoiceTime = now;
+                    setStatus('Answer captured... continue speaking or click the arrow when complete.');
+                }
+
+                if (level > AUDIO_THRESHOLD) {
+                    heardSpeaking = true;
+                    lastVoiceTime = now;
+                    setStatus('Answer recording... click the arrow when your answer is complete.');
+                }
+
+                const silenceTime = now - lastVoiceTime;
+                const totalListenTime = now - listenStartedAt;
+                if (heardSpeaking && silenceTime >= ANSWER_SILENCE_LIMIT) {
+                    setStatus('Paused. Continue speaking or click the arrow to finish this answer.');
+                }
+                if (heardSpeaking && totalListenTime >= MAX_ANSWER_TIME) {
+                    cleanUp();
+                    activeAnswerSubmit = null;
+                    onReady(true);
+                }
+                if (!heardSpeaking && totalListenTime >= NO_SPEECH_LIMIT) {
+                    cleanUp();
+                    activeAnswerSubmit = null;
+                    onReady(false);
+                }
+            }, 250);
+        }
+
+        function askQuestions(index = 0) {
+            if (index >= questions.length) {
+                updateProgress(questions.length);
+                stopRecording();
+                return;
+            }
+
+            updateProgress(index);
+            questionDiv.textContent = questions[index];
+            setStatus('Listening for your answer...');
+            speak(questions[index], () => {
+                listenForAnswer(questions[index], index, (heard) => {
+                    if (heard) {
+                        setStatus('Answer recorded. Moving to the next question in 2 seconds...');
+                    } else {
+                        setStatus('No answer detected. Moving to the next question in 2 seconds...');
+                    }
+                    setTimeout(() => {
+                        askQuestions(index + 1);
+                    }, 2000);
+                });
+            });
+        }
+
+        function stopRecording() {
+            setAssistant('Completed');
+            setStatus('Interview complete. Uploading your recording...');
+
+            const uploadRecording = () => {
+                if (globalSpeechCapture) {
+                    globalSpeechCapture.stop();
+                    globalSpeechCapture = null;
+                }
+                if (webcamStream) {
+                    webcamStream.getTracks().forEach(track => track.stop());
+                }
+
+                if (!recordedChunks.length) {
+                    setStatus('Recording was empty. Please restart the interview and allow camera/microphone access.');
+                    startBtn.disabled = false;
+                    return;
+                }
+
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                const formData = new FormData();
+                formData.append('video', blob);
+                if (audioChunks.length) {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm;codecs=opus' });
+                    formData.append('audio', audioBlob, 'interview_audio.webm');
+                }
+                formData.append('transcript', transcriptEntries.join('\n\n'));
+                formData.append('answer_windows', JSON.stringify(answerWindows));
+
+                setStatus('Saving recording. You will be moved to feedback next...');
+
+                fetch('/upload_video/', {
+                    method: 'POST',
+                    body: formData
+                }).then(res => {
+                    if (!res.ok) {
+                        throw new Error('Upload failed with status ' + res.status);
+                    }
+                    return res.text();
+                }).then((resultText) => {
+                    questionDiv.textContent = 'Interview complete. Thank you!';
+                    setStatus(resultText || 'Your interview recording and answer transcript have been uploaded.');
+                    window.location.href = "{% url 'interview_feedback' %}";
+                }).catch((error) => {
+                    console.error(error);
+                    setStatus('Upload or transcription failed. Please try again.');
+                    startBtn.disabled = false;
+                });
+            };
+
+            let pendingStops = 0;
+            const waitForStopThenUpload = () => {
+                pendingStops -= 1;
+                if (pendingStops <= 0) uploadRecording();
+            };
+
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                pendingStops += 1;
+                mediaRecorder.onstop = waitForStopThenUpload;
+                try { mediaRecorder.requestData(); } catch (error) {}
+                mediaRecorder.stop();
+            }
+            if (audioRecorder && audioRecorder.state !== 'inactive') {
+                pendingStops += 1;
+                audioRecorder.onstop = waitForStopThenUpload;
+                try { audioRecorder.requestData(); } catch (error) {}
+                audioRecorder.stop();
+            }
+
+            if (pendingStops === 0) {
+                uploadRecording();
+            }
+        }
+
+        startBtn.onclick = async () => {
+            if (!questions.length || questions[0].startsWith('')) {
+                setStatus('Please upload your resume before starting the interview.');
+                return;
+            }
+
+            startBtn.disabled = true;
+            setStatus('Requesting camera and microphone access...');
+            try {
+                await startWebcam();
+                speak("Welcome to your AI Interview. Let's begin.", () => {
+                    askQuestions(0);
+                });
+            } catch (error) {
+                cameraState.textContent = 'Blocked';
+                micState.textContent = 'Blocked';
+                questionDiv.textContent = 'Webcam access failed. Please check your browser permissions.';
+                setStatus('Camera or microphone permission was blocked.');
+                startBtn.disabled = false;
+                console.error(error);
+            }
+        };
+
+        if (sendAnswer) {
+            sendAnswer.addEventListener('click', () => {
+                if (activeAnswerSubmit) {
+                    activeAnswerSubmit();
+                    activeAnswerSubmit = null;
+                }
+            });
+        }
+
+        if (typedAnswer) {
+            typedAnswer.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' && activeAnswerSubmit) {
+                    event.preventDefault();
+                    activeAnswerSubmit();
+                    activeAnswerSubmit = null;
+                }
+            });
+        }
+
+        updateProgress(0);
+    </script>
+    <script src="{% static 'js/theme.js' %}"></script>
+</body>
+</html>
+
+
