@@ -1,4 +1,4 @@
-# analyzerapp/models.py
+﻿# analyzerapp/models.py
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -46,6 +46,8 @@ class Candidate(models.Model):
     interview_video = models.FileField(upload_to='media/interviews/', null=True, blank=True)
     interview_transcript = models.TextField(blank=True)
     ai_result = models.TextField(blank=True)
+    resume_evaluation = models.TextField(blank=True)
+    resume_score = models.FloatField(default=0)
 
     score = models.FloatField(default=0)
     status = models.CharField(max_length=20, default='Pending')
@@ -86,7 +88,9 @@ class Candidate1(models.Model):
     score = models.FloatField(default=0)
     interview_video = models.FileField(upload_to='media/interviews/', null=True, blank=True)
     
-    submitted_at = models.DateTimeField(auto_now_add=True)  # ✅ Add this line
+    submitted_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
+
+

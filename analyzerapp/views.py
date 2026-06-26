@@ -10,6 +10,7 @@ from .forms import ResumeUploadForm
 from .ai.resume_parser import parse_resume, extract_text_from_resume
 from .ai.question_generator import generate_questions
 from .ai.scoring_model import calculate_score
+from .ai.resume_evaluator import evaluate_resume, get_role_requirements
 from django.contrib.sessions.backends.db import SessionStore
   
 # ---------- INDEX ----------
@@ -177,17 +178,52 @@ def set_candidate_session(request, candidate):
         request.session['uploaded_resume_path'] = latest_resume.resume_file.path
 
 
+
+def build_resume_evaluation_for_candidate(candidate, resume_path):
+    resume_text = extract_text_from_resume(resume_path)
+    role = candidate.interview_role or 'Software Developer'
+    evaluation = evaluate_resume(role, get_role_requirements(role), resume_text)
+    candidate.resume_evaluation = json.dumps(evaluation, indent=2)
+    candidate.resume_score = evaluation.get('overall_resume_score', 0)
+    candidate.save(update_fields=['resume_evaluation', 'resume_score'])
+    return evaluation
+
+
+def get_candidate_resume_evaluation(candidate):
+    if not candidate or not candidate.resume_evaluation:
+        return None
+    try:
+        return json.loads(candidate.resume_evaluation)
+    except (TypeError, ValueError):
+        return None
+
+
+def dashboard_context(candidate):
+    evaluation = get_candidate_resume_evaluation(candidate)
+    if not evaluation and candidate and candidate.resumes.exists():
+        latest_resume = candidate.resumes.order_by('-uploaded_at').first()
+        if latest_resume and latest_resume.resume_file:
+            try:
+                evaluation = build_resume_evaluation_for_candidate(candidate, latest_resume.resume_file.path)
+            except Exception:
+                evaluation = None
+    return {
+        'candidate': candidate,
+        'role_choices': ROLE_CHOICES,
+        'razorpay_key_id': os.environ.get('RAZORPAY_KEY_ID', ''),
+        'resume_evaluation': evaluation,
+    }
 def user_dashboard(request):
     candidate_id = request.session.get('candidate_id')
     if candidate_id:
         candidate = Candidate.objects.get(id=candidate_id)
         set_candidate_session(request, candidate)
-        return render(request, 'user_dashboard.html', {'candidate': candidate, 'role_choices': ROLE_CHOICES, 'razorpay_key_id': os.environ.get('RAZORPAY_KEY_ID', '')})
+        return render(request, 'user_dashboard.html', dashboard_context(candidate))
 
     if request.user.is_authenticated:
         candidate = get_or_create_candidate_for_user(request.user)
         set_candidate_session(request, candidate)
-        return render(request, 'user_dashboard.html', {'candidate': candidate, 'role_choices': ROLE_CHOICES, 'razorpay_key_id': os.environ.get('RAZORPAY_KEY_ID', '')})
+        return render(request, 'user_dashboard.html', dashboard_context(candidate))
 
     return redirect('user_login')
 
@@ -230,6 +266,7 @@ def upload_resume(request):
         candidate.status = 'Accepted'
         candidate.score = 0
         candidate.save(update_fields=['interview_role', 'interview_duration', 'interview_question_count', 'status', 'score'])
+        build_resume_evaluation_for_candidate(candidate, absolute_path)
 
         return redirect('user_dashboard')
 
@@ -251,6 +288,9 @@ def update_user_role(request):
             candidate.status = 'Accepted'
             candidate.score = 0
             candidate.save(update_fields=['interview_role', 'interview_duration', 'interview_question_count', 'status', 'score'])
+            latest_resume = candidate.resumes.order_by('-uploaded_at').first()
+            if latest_resume and latest_resume.resume_file:
+                build_resume_evaluation_for_candidate(candidate, latest_resume.resume_file.path)
     return redirect('user_dashboard')
 
 
@@ -1081,6 +1121,9 @@ from django.contrib.auth import logout
 def user_logout(request):
     logout(request)
     return redirect('index')  
+
+
+
 
 
 

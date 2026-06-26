@@ -814,7 +814,7 @@
                     <div class="metric-icon green"></div>
                     <div>
                         <div class="metric-label">Resume Score</div>
-                        <div class="metric-value">{% if candidate.interview_video and candidate.status == 'Accepted' %}{{ candidate.score|default:"--" }}/100 <small>Published</small>{% else %}-- <small>Pending Review</small>{% endif %}</div>
+                        <div class="metric-value">{% if resume_evaluation %}{{ resume_evaluation.overall_resume_score }}/100 <small>{{ resume_evaluation.candidate_level }}</small>{% elif candidate.interview_video and candidate.status == 'Accepted' %}{{ candidate.score|default:"--" }}/100 <small>Published</small>{% else %}-- <small>Upload Resume</small>{% endif %}</div>
                     </div>
                 </div>
                 <div class="metric-card">
@@ -867,6 +867,30 @@
                     </div>
                 </article>
 
+
+                {% if resume_evaluation %}
+                <article class="panel">
+                    <div class="panel-head">
+                        <div class="panel-icon orange"></div>
+                        <span class="pill success">Evaluated</span>
+                    </div>
+                    <h3>Resume Evaluation</h3>
+                    <ul class="detail-list">
+                        <li><span>Overall Score</span><strong>{{ resume_evaluation.overall_resume_score }}/100</strong></li>
+                        <li><span>ATS Score</span><strong>{{ resume_evaluation.ats_score }}/100</strong></li>
+                        <li><span>Role Match</span><strong>{{ resume_evaluation.role_match_score }}/100</strong></li>
+                        <li><span>Level</span><strong>{{ resume_evaluation.candidate_level }}</strong></li>
+                    </ul>
+                    <h4 style="margin: 18px 0 8px; font-size: 0.95rem;">Matching Skills</h4>
+                    <p style="margin: 0 0 12px; color: #64748b; line-height: 1.55; font-size: 0.86rem;">
+                        {% for skill in resume_evaluation.matching_skills|slice:":6" %}{{ skill }}{% if not forloop.last %}, {% endif %}{% empty %}No strong role matches detected yet.{% endfor %}
+                    </p>
+                    <h4 style="margin: 0 0 8px; font-size: 0.95rem;">High Priority Improvements</h4>
+                    <p style="margin: 0; color: #64748b; line-height: 1.55; font-size: 0.86rem;">
+                        {% for item in resume_evaluation.improvement_priority.high|slice:":3" %}{{ item }}{% if not forloop.last %}; {% endif %}{% empty %}No high priority issues found.{% endfor %}
+                    </p>
+                </article>
+                {% endif %}
                 {% if not candidate.interview_video %}
                 <article class="panel">
                     <div class="panel-head">
@@ -1009,6 +1033,7 @@
     </script>
 </body>
 </html>
+
 
 
 
