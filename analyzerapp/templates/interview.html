@@ -814,8 +814,8 @@
                             </div>
                             <div class="input-row">
                                 <input id="typedAnswer" type="text" placeholder="Type your answer here...">
-                                <button type="button"></button>
-                                <button id="sendAnswer" type="button"></button>
+                                <button type="button" data-icon="mic" aria-label="Voice answer"></button>
+                                <button id="sendAnswer" type="button" data-icon="send" aria-label="Submit answer"></button>
                             </div>
                         </div>
                     </section>
@@ -832,7 +832,7 @@
                     </div>
                     <div class="video-controls">
                         <button class="control-btn" type="button"></button>
-                        <button class="control-btn red" type="button"></button>
+                        <button class="control-btn red" type="button" aria-label="Stop"></button>
                         <button class="control-btn" type="button"></button>
                     </div>
                 </article>
@@ -977,7 +977,7 @@
             analyser = audioContext.createAnalyser();
             analyser.fftSize = 2048;
             audioSource.connect(analyser);
-            globalSpeechCapture = startSpeechCapture();
+            
         }
 
         function speak(text, callback) {
@@ -1045,7 +1045,12 @@
             let heardSpeaking = false;
             let lastVoiceTime = Date.now();
             const listenStartedAt = Date.now();
+            if (globalSpeechCapture) {
+                globalSpeechCapture.stop();
+                globalSpeechCapture = null;
+            }
             currentSpeechBucket = { finalText: '', interimText: '' };
+            globalSpeechCapture = startSpeechCapture();
             let completed = false;
 
             const cleanUp = (forceUseSpeech = false) => {
@@ -1260,6 +1265,7 @@
     <script src="{% static 'js/theme.js' %}"></script>
 </body>
 </html>
+
 
 
 

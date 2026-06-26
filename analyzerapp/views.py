@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.core.files.base import ContentFile
 from .models import Resume, Interview, UserFeedback
 from .forms import ResumeUploadForm
-from .ai.resume_parser import parse_resume
+from .ai.resume_parser import parse_resume, extract_text_from_resume
 from .ai.question_generator import generate_questions
 from .ai.scoring_model import calculate_score
 from django.contrib.sessions.backends.db import SessionStore
@@ -22,6 +22,36 @@ ROLE_CHOICES = [
     'Data Analyst',
     'Machine Learning Engineer',
 ]
+
+TECH_ROLE_KEYWORDS = {
+    'Frontend Developer': ['html', 'css', 'javascript', 'react', 'angular', 'vue', 'frontend', 'ui', 'web'],
+    'Backend Developer': ['python', 'java', 'django', 'flask', 'node', 'api', 'sql', 'database', 'backend'],
+    'Software Developer': ['python', 'java', 'c++', 'software', 'programming', 'developer', 'algorithm', 'sql'],
+    'Full Stack Developer': ['html', 'css', 'javascript', 'python', 'java', 'react', 'node', 'django', 'sql'],
+    'UI/UX Designer': ['ui', 'ux', 'figma', 'wireframe', 'prototype', 'user research', 'interface', 'design'],
+    'Data Analyst': ['excel', 'sql', 'python', 'power bi', 'tableau', 'data', 'analytics', 'statistics'],
+    'Machine Learning Engineer': ['machine learning', 'deep learning', 'python', 'model', 'tensorflow', 'pytorch', 'nlp', 'ai'],
+}
+NON_IT_KEYWORDS = [
+    'doctor', 'mbbs', 'bds', 'nurse', 'patient', 'hospital', 'clinic', 'medical', 'medicine',
+    'surgery', 'pharma', 'pharmacy', 'dentist', 'physician', 'clinical', 'diagnosis',
+    'teacher', 'civil engineer', 'mechanical', 'accountant', 'lawyer', 'advocate'
+]
+GENERAL_TECH_KEYWORDS = sorted({keyword for values in TECH_ROLE_KEYWORDS.values() for keyword in values})
+
+def is_resume_compatible_with_role(resume_text, role):
+    text = (resume_text or '').lower()
+    if not text.strip():
+        return False, 'We could not read enough resume text. Please upload a clear PDF or DOCX resume.'
+    role_keywords = TECH_ROLE_KEYWORDS.get(role, [])
+    role_hits = sum(1 for keyword in role_keywords if keyword in text)
+    tech_hits = sum(1 for keyword in GENERAL_TECH_KEYWORDS if keyword in text)
+    non_it_hits = sum(1 for keyword in NON_IT_KEYWORDS if keyword in text)
+    if non_it_hits >= 2 and tech_hits < 2:
+        return False, f'This resume looks unrelated to {role}. Please upload an IT/software resume or select a role matching your resume.'
+    if role_hits == 0 and tech_hits < 2:
+        return False, f'This resume does not show enough skills for {role}. Please upload a matching resume before starting the interview.'
+    return True, ''
 
 def index(request):
     return render(request, 'index.html')
@@ -546,11 +576,28 @@ def build_question_transcript(browser_transcript, answer_windows_json, whisper_s
             answer = whisper_answer
         if not answer and browser_is_valid:
             answer = browser_answer
-        answer = answer or 'No answer detected'
+        answer = strip_question_lead_from_answer(question, answer) or 'No answer detected'
         transcript_blocks.append(f"Q: {question}\nA: {answer}")
 
     return '\n\n'.join(transcript_blocks), 'whisper'
 
+
+def strip_question_lead_from_answer(question, answer):
+    answer = (answer or '').strip()
+    if not answer:
+        return answer
+    normalized_question = re.sub(r'[^a-z0-9 ]+', ' ', (question or '').lower()).split()
+    if normalized_question:
+        answer_words = re.sub(r'[^a-z0-9 ]+', ' ', answer.lower()).split()
+        if answer_words[:len(normalized_question)] == normalized_question:
+            return ' '.join(answer.split()[len(normalized_question):]).strip(' .:-') or 'No answer detected'
+        question_phrase = ' '.join(normalized_question)
+        normalized_answer = re.sub(r'[^a-z0-9 ]+', ' ', answer.lower()).strip()
+        if normalized_answer.startswith(question_phrase[:40]) and '?' in answer[:220]:
+            return re.sub(r'^.*?\?\s*', '', answer, count=1).strip() or 'No answer detected'
+    if re.match(r'^(how|what|why|when|where|who|explain|tell)\b', answer, re.I) and '?' in answer[:180]:
+        return re.sub(r'^.*?\?\s*', '', answer, count=1).strip() or 'No answer detected'
+    return answer
 def score_transcript(transcript):
     lines = [line.strip() for line in transcript.splitlines() if line.strip()]
     questions = [line for line in lines if line.startswith('Q:')]
@@ -701,7 +748,7 @@ def interview_feedback(request):
 
 # analyzerapp/views.py
 from django.shortcuts import render
-from .ai.resume_parser import parse_resume
+from .ai.resume_parser import parse_resume, extract_text_from_resume
 from .ai.question_generator import generate_questions
 
 def start_interview(request):
@@ -724,6 +771,11 @@ def start_interview(request):
             request.session['uploaded_resume_path'] = resume_path
 
     if resume_path and os.path.exists(resume_path):
+        resume_text = extract_text_from_resume(resume_path)
+        is_compatible, mismatch_message = is_resume_compatible_with_role(resume_text, candidate.interview_role if candidate else '')
+        if not is_compatible:
+            messages.error(request, mismatch_message)
+            return redirect('user_dashboard')
         parsed = parse_resume(resume_path)
         parsed["target_role"] = candidate.interview_role if candidate else ""
         questions = generate_questions(parsed, candidate.interview_role if candidate else None)
@@ -1029,6 +1081,10 @@ from django.contrib.auth import logout
 def user_logout(request):
     logout(request)
     return redirect('index')  
+
+
+
+
 
 
 

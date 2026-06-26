@@ -230,3 +230,25 @@
     }
 }
 
+
+/* Restored UI icons using ASCII-safe Unicode escapes. */
+.nav-icon::before { content: "\25A1"; font-weight: 900; }
+a[href*="dashboard"] .nav-icon::before { content: "\25A6"; }
+a[href*="resume"] .nav-icon::before, a[href*="upload_resume"] .nav-icon::before { content: "\25A3"; }
+a[href*="analytics"] .nav-icon::before { content: "\25C8"; }
+a[href*="logout"] .nav-icon::before { content: "\2197"; }
+a[href="#"] .nav-icon::before { content: "\2699"; }
+.metric-icon::before, .panel-icon::before, .info-icon::before, .chip-icon::before { font-weight: 900; }
+.metric-icon.green::before, .panel-icon.green::before, .info-icon.green::before, .chip-green::before { content: "\2713"; }
+.metric-icon.blue::before, .panel-icon.blue::before, .info-icon.blue::before, .chip-blue::before { content: "\25CE"; }
+.metric-icon.purple::before, .panel-icon.purple::before, .info-icon.purple::before, .chip-purple::before { content: "\25C9"; }
+.metric-icon.orange::before, .panel-icon.orange::before, .info-icon.orange::before, .chip-orange::before { content: "\25A3"; }
+.crown::before { content: "\265B"; font-weight: 900; }
+.bell::before { content: "\25E6"; font-weight: 900; }
+.check::before { content: "\2713"; font-weight: 900; }
+.icon-orb::before, .cloud::before { content: "\21E7"; font-weight: 900; }
+.control-btn::before { content: "\25CB"; font-weight: 900; }
+.control-btn.red::before { content: "\25A0"; }
+[data-icon="mic"]::before { content: "\266B"; font-weight: 900; }
+[data-icon="send"]::before { content: "\27A4"; font-weight: 900; }
+
